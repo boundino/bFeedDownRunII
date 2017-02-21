@@ -70,7 +70,7 @@ void fitBoverD(TString output)
   for(int i=0;i<nPtBins;i++)
     {
       Float_t apt = (ptBins[i]+ptBins[i+1])/2.;
-      if(ptBins[i]<8. || ptBins[i+1]>40.)
+      if(ptBins[i]<8. || ptBins[i+1]>60.)
         {
           hBoverDh->SetBinContent(i+1,3);
           hBoverDl->SetBinContent(i+1,1);
@@ -80,7 +80,7 @@ void fitBoverD(TString output)
           int j;
           for(j=0;j<nPtBinsB;j++)
             {
-              if(ptBins[i]>=ptBinsB[j] && ptBins[i+1]<=ptBinsB[j+1]) break;
+              if(apt>=ptBinsB[j] && apt<=ptBinsB[j+1]) break;
             }
           if(j>=nPtBinsB)
             {
