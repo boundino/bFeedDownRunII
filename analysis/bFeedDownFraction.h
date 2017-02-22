@@ -107,7 +107,7 @@ TF1* fitMass(TH1D* hData, TH1D* hMCSignal, TH1D* hMCSwapped)
   f->ReleaseParameter(1);
   hMCSignal->Fit("fMass","L q","",minhisto,maxhisto);
   hMCSignal->Fit("fMass","L q","",minhisto,maxhisto);
-  hMCSignal->Fit("fMass","L m","",minhisto,maxhisto);
+  hMCSignal->Fit("fMass","L m q","",minhisto,maxhisto);
 
   f->FixParameter(1,f->GetParameter(1));
   f->FixParameter(2,f->GetParameter(2));
@@ -120,7 +120,7 @@ TF1* fitMass(TH1D* hData, TH1D* hMCSignal, TH1D* hMCSwapped)
   hMCSwapped->Fit("fMass","L q","",minhisto,maxhisto);
   hMCSwapped->Fit("fMass","L q","",minhisto,maxhisto);
   hMCSwapped->Fit("fMass","L q","",minhisto,maxhisto);
-  hMCSwapped->Fit("fMass","L m","",minhisto,maxhisto);
+  hMCSwapped->Fit("fMass","L m q","",minhisto,maxhisto);
 
   f->FixParameter(7,hMCSignal->Integral(0,1000)/(hMCSwapped->Integral(0,1000)+hMCSignal->Integral(0,1000)));
   f->FixParameter(8,f->GetParameter(8));
@@ -140,7 +140,7 @@ TF1* fitMass(TH1D* hData, TH1D* hMCSignal, TH1D* hMCSwapped)
   hData->Fit("fMass","L q","",minhisto,maxhisto);
   hData->Fit("fMass","L q","",minhisto,maxhisto);
   hData->Fit("fMass","L q","",minhisto,maxhisto);
-  hData->Fit("fMass","L m","",minhisto,maxhisto);
+  hData->Fit("fMass","L m q","",minhisto,maxhisto);
 
   TF1* background = new TF1("fBackground","[0]+[1]*x+[2]*x*x+[3]*x*x*x");
   background->SetParameter(0,f->GetParameter(3));
@@ -183,8 +183,6 @@ TF1* fitMass(TH1D* hData, TH1D* hMCSignal, TH1D* hMCSwapped)
   hData->SetMarkerSize(0.3);
   hData->Draw("e");
 
-  cout<<"hData->GetMaximum(): "<<hData->GetMaximum()<<endl;
-
   background->Draw("same");
   mass->SetRange(minhisto,maxhisto);
   mass->Draw("same");
@@ -195,7 +193,6 @@ TF1* fitMass(TH1D* hData, TH1D* hMCSignal, TH1D* hMCSwapped)
   Double_t yield = mass->Integral(minhisto,maxhisto)/hData->GetBinWidth(1);
   Double_t yieldErr = mass->Integral(minhisto,maxhisto)/hData->GetBinWidth(1)*mass->GetParError(0)/mass->GetParameter(0);
 
-  std::cout<<"integral function yield: "<<yield<<"    fit yield: "<<f->GetParameter(0)*f->GetParameter(7)/hData->GetBinWidth(1)<<" +- "<<f->GetParError(0)*f->GetParameter(7)/hData->GetBinWidth(1)<<std::endl;
   TLegend* leg = new TLegend(0.65,0.5,0.82,0.88,NULL,"brNDC");
   leg->SetBorderSize(0);
   leg->SetTextSize(0.06);

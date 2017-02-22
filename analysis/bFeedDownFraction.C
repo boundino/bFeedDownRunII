@@ -2,8 +2,16 @@ using namespace std;
 #include "bFeedDownFraction.h"
 #include "savehist/project.h"
 
-void bFeedDownFraction()
+void bFeedDownFraction(TString col, Float_t centmin=0, Float_t centmax=100)
 {
+  Bool_t isPbPb = (col=="PbPb")?true:false;
+  TString tcoly = isPbPb?Form("%s_cent_%.0f_%.0f_pt",col.Data(),centmin,centmax):Form("%s_pt",col.Data());
+
+  cout<<endl<<endl;
+  cout<<" -- Processing bFeedDownFraction: "<<col;
+  if(isPbPb) cout<<Form(" - Centrality %.0f - %.0f",centmin,centmax)<<"%";
+  cout<<endl;
+
   gStyle->SetTextSize(0.05);
   gStyle->SetTextFont(42);
   gStyle->SetPadRightMargin(0.04);
@@ -15,81 +23,71 @@ void bFeedDownFraction()
   gStyle->SetOptStat(0);
   gStyle->SetOptTitle(0);
 
-  TCanvas* c4 = new TCanvas("c4","",800,600);
-  c4->Divide(2,2);
-   
-  TCanvas* c2 = new TCanvas("c2","",400,600);
+  TCanvas* c6 = new TCanvas("c6","",1200,600);
+  c6->Divide(3,2);   
+  TCanvas* c2 = new TCanvas("c2","",450,600);
   c2->Divide(1,2);
-
-  TCanvas* c1 = new TCanvas();
-
+  TCanvas* c1 = new TCanvas("c1","",400,300);
   TCanvas* c15 = new TCanvas("c15","",810,1000);
   c15->Divide(3,5);
 
-  TFile* fPP = new TFile("rootfiles/bFeedDownPP.hist.root");
-  TFile* fPPMB = new TFile("rootfiles/bFeedDownPPMB.hist.root");
-  TFile* fPPMC = new TFile("rootfiles/bFeedDownPPMC.hist.root");
-  TFile* fPPMBMC = new TFile("rootfiles/bFeedDownPPMBMC.hist.root");
+  TFile* f = new TFile(Form("rootfiles/bFeedDown%s.hist.root",col.Data()));
+  TFile* fMB = new TFile(Form("rootfiles/bFeedDown%sMB.hist.root",col.Data()));
+  TFile* fMC = new TFile(Form("rootfiles/bFeedDown%sMC.hist.root",col.Data()));
+  TFile* fMBMC = new TFile(Form("rootfiles/bFeedDown%sMBMC.hist.root",col.Data()));
 
-  TH3D* hDataPP = (TH3D*)fPP->Get("hData");
-  TH3D* hSidebandPP = (TH3D*)fPP->Get("hSideband");
-  TH3D* hDataPPMB = (TH3D*)fPPMB->Get("hData");
-  TH3D* hSidebandPPMB = (TH3D*)fPPMB->Get("hSideband");
-  TH3D* hPtMD0DcaPP = (TH3D*)fPP->Get("hPtMD0Dca");
-  TH3D* hPtMD0DcaPPMB = (TH3D*)fPPMB->Get("hPtMD0Dca");
+  TH3D* hDataFile = (TH3D*)f->Get("hData");
+  TH3D* hSidebandFile = (TH3D*)f->Get("hSideband");
+  TH3D* hDataFileMB = (TH3D*)fMB->Get("hData");
+  TH3D* hSidebandFileMB = (TH3D*)fMB->Get("hSideband");
+  TH3D* hPtMD0DcaFile = (TH3D*)f->Get("hPtMD0Dca");
+  TH3D* hPtMD0DcaFileMB = (TH3D*)fMB->Get("hPtMD0Dca");
 
-  TH3D* hMCPSignalPP = (TH3D*)fPPMC->Get("hMCPSignal");
-  TH3D* hMCNPSignalPP = (TH3D*)fPPMC->Get("hMCNPSignal");
-  TH3D* hMCPSignalPPMB = (TH3D*)fPPMBMC->Get("hMCPSignal");
-  TH3D* hMCNPSignalPPMB = (TH3D*)fPPMBMC->Get("hMCNPSignal");
-  TH3D* hPtMD0DcaMCPSignalPP = (TH3D*)fPPMC->Get("hPtMD0DcaMCPSignal");
-  TH3D* hPtMD0DcaMCPSwappedPP = (TH3D*)fPPMC->Get("hPtMD0DcaMCPSwapped");
-  TH3D* hPtMD0DcaMCPSignalPPMB =(TH3D*)fPPMBMC->Get("hPtMD0DcaMCPSignal");
-  TH3D* hPtMD0DcaMCPSwappedPPMB = (TH3D*)fPPMBMC->Get("hPtMD0DcaMCPSwapped");
+  TH3D* hMCPSignalFile = (TH3D*)fMC->Get("hMCPSignal");
+  TH3D* hMCNPSignalFile = (TH3D*)fMC->Get("hMCNPSignal");
+  TH3D* hMCPSignalFileMB = (TH3D*)fMBMC->Get("hMCPSignal");
+  TH3D* hMCNPSignalFileMB = (TH3D*)fMBMC->Get("hMCNPSignal");
+  TH3D* hPtMD0DcaMCPSignalFile = (TH3D*)fMC->Get("hPtMD0DcaMCPSignal");
+  TH3D* hPtMD0DcaMCPSwappedFile = (TH3D*)fMC->Get("hPtMD0DcaMCPSwapped");
+  TH3D* hPtMD0DcaMCPSignalFileMB =(TH3D*)fMBMC->Get("hPtMD0DcaMCPSignal");
+  TH3D* hPtMD0DcaMCPSwappedFileMB = (TH3D*)fMBMC->Get("hPtMD0DcaMCPSwapped");
 
-  TH3D* hData = (TH3D*)hDataPP->Clone("hData");
+  TH3D* hData = (TH3D*)hDataFile->Clone("hData");
   hData->Sumw2();
-  hData->Add(hDataPPMB);
-
-  TH3D* hSideband = (TH3D*)hSidebandPP->Clone("hSideband");
+  hData->Add(hDataFileMB);
+  TH3D* hSideband = (TH3D*)hSidebandFile->Clone("hSideband");
   hSideband->Sumw2();
-  hSideband->Add(hSidebandPPMB);
-
-  TH3D* hPtMD0Dca = (TH3D*)hPtMD0DcaPP->Clone("hPtMD0Dca");
+  hSideband->Add(hSidebandFileMB);
+  TH3D* hPtMD0Dca = (TH3D*)hPtMD0DcaFile->Clone("hPtMD0Dca");
   hPtMD0Dca->Sumw2();
-  hPtMD0Dca->Add(hPtMD0DcaPPMB);
-
-  TH3D* hMCPSignal = (TH3D*)hMCPSignalPP->Clone("hMCPSignal");
+  hPtMD0Dca->Add(hPtMD0DcaFileMB);
+  TH3D* hMCPSignal = (TH3D*)hMCPSignalFile->Clone("hMCPSignal");
   hMCPSignal->Sumw2();
-  hMCPSignal->Add(hMCPSignalPPMB);
-
-  TH3D* hMCNPSignal = (TH3D*)hMCNPSignalPP->Clone("hMCNPSignal");
+  hMCPSignal->Add(hMCPSignalFileMB);
+  TH3D* hMCNPSignal = (TH3D*)hMCNPSignalFile->Clone("hMCNPSignal");
   hMCNPSignal->Sumw2();
-  hMCNPSignal->Add(hMCNPSignalPPMB);
-
-  TH3D* hPtMD0DcaMCPSignal = (TH3D*)hPtMD0DcaMCPSignalPP->Clone("hPtMD0DcaMCPSignal");
+  hMCNPSignal->Add(hMCNPSignalFileMB);
+  TH3D* hPtMD0DcaMCPSignal = (TH3D*)hPtMD0DcaMCPSignalFile->Clone("hPtMD0DcaMCPSignal");
   hPtMD0DcaMCPSignal->Sumw2();
-  hPtMD0DcaMCPSignal->Add(hPtMD0DcaMCPSignalPPMB);
-
-  TH3D* hPtMD0DcaMCPSwapped =(TH3D*)hPtMD0DcaMCPSwappedPP->Clone("hPtMD0DcaMCPSwapped");
+  hPtMD0DcaMCPSignal->Add(hPtMD0DcaMCPSignalFileMB);
+  TH3D* hPtMD0DcaMCPSwapped =(TH3D*)hPtMD0DcaMCPSwappedFile->Clone("hPtMD0DcaMCPSwapped");
   hPtMD0DcaMCPSwapped->Sumw2();
-  hPtMD0DcaMCPSwapped->Add(hPtMD0DcaMCPSwappedPPMB);
+  hPtMD0DcaMCPSwapped->Add(hPtMD0DcaMCPSwappedFileMB);
 
-  TLatex* texCms = new TLatex(0.18,0.93, "#scale[1.25]{CMS} Preliminary");
-  texCms->SetNDC();
-  texCms->SetTextAlign(12);
-  texCms->SetTextSize(0.06);
-  texCms->SetTextFont(42);
-
-  TLatex* texCol = new TLatex(0.96,0.93, "PP #sqrt{s_{NN}} = 5.02 TeV");
-  texCol->SetNDC();
-  texCol->SetTextAlign(32);
-  texCol->SetTextSize(0.06);
-  texCol->SetTextFont(42);
+  TLatex* texCms = new TLatex(0.15,0.95, "#scale[1.25]{CMS} Preliminary");
+  settex(texCms,0.06,12);
+  TLatex* texCol = new TLatex(0.96,0.95, Form("%s #sqrt{s_{NN}} = 5.02 TeV",col.Data()));
+  settex(texCol,0.06,32);
+  TString per = "%";
+  TLatex* texCent = new TLatex(0.96,0.95, Form("%.0f-%.0f%s",centmin,centmax,per.Data()));
+  settex(texCent,0.06,32);
 
   float pts[nBinX];
+  float ptseF[nBinX]; for(int i=0;i<nBinX;i++) ptseF[i]=0.4;
   float promptFraction[nBinX];
   float promptFractionError[nBinX];
+  float promptFractionErrorMCSmear[nBinX];
+  float promptFractionErrorDataSmear[nBinX];
   float promptFractionErrorDataOnly[nBinX];
   float totalYield[nBinX];
   float totalYieldError[nBinX];
@@ -102,32 +100,25 @@ void bFeedDownFraction()
   TH1D** ahD0DcaMCPSignal = new TH1D*[nBinX];
   TH1D** ahD0DcaMCNPSignal = new TH1D*[nBinX];
 
+  cout<<endl<<endl;
+  cout<<" -- Loop pT bins "<<endl;
   for(int i=1; i<=nBinX; i++)
     {
       pts[i-1] = hData->GetXaxis()->GetBinCenter(i);
       float ptLow = hData->GetXaxis()->GetBinLowEdge(i);
       float ptHigh = hData->GetXaxis()->GetBinUpEdge(i);
-      cout<<endl<<"======================================="<<endl;
-      cout<<"pT range: "<<ptLow<<" "<<ptHigh<<endl;
+      cout<<endl<<"  - Processing: "<<ptLow<<" - "<<ptHigh<<" GeV/c"<<endl;
 
       TLatex* texPtY = new TLatex(0.32,0.82,Form("%.1f < p_{T} < %.1f GeV/c      |y| < 1.0",ptLow,ptHigh));
-      texPtY->SetNDC();
-      texPtY->SetTextFont(42);
-      texPtY->SetTextSize(0.06);
-      texPtY->SetLineWidth(2);
-
+      settex(texPtY,0.06);
       TLatex* texPt = new TLatex(0.18,0.82,Form("%.1f < p_{T} < %.1f GeV/c",ptLow,ptHigh));
-      texPt->SetNDC();
-      texPt->SetTextFont(42);
-      texPt->SetTextSize(0.06);
-      texPt->SetLineWidth(2);
-
+      settex(texPt,0.06);
+      TLatex* texPtTitle = new TLatex(0.15,0.95,Form("%.1f < p_{T} < %.1f GeV/c",ptLow,ptHigh));
+      settex(texPtTitle,0.06);
       TLatex* texY = new TLatex(0.18,0.74,Form("|y| < 1.0"));
-      texY->SetNDC();
-      texY->SetTextFont(42);
-      texY->SetTextSize(0.06);
-      texY->SetLineWidth(2);
+      settex(texY,0.06);
 
+      cout<<"    Calculating sideband ratios ..."<<endl;
       c2->cd(1);
 
       hPtMD0Dca->GetZaxis()->SetRange(1,100);
@@ -161,21 +152,36 @@ void bFeedDownFraction()
       float massSideBand4 = massD+0.1;
 
       float scaleSideBand = background->Integral(massSignal1, massSignal2)/(background->Integral(massSideBand1, massSideBand2)+background->Integral(massSideBand3, massSideBand4));
-      cout<<"scaleSideBand: "<<scaleSideBand<<endl;
 
       TLatex* texScale = new TLatex(0.18,0.66,Form("side band scale: %1.3f", scaleSideBand));
-      texScale->SetNDC();
-      texScale->SetTextFont(42);
-      texScale->SetTextSize(0.06);
-      texScale->SetLineWidth(2);
+      settex(texScale,0.06);
       texScale->Draw();
 
-      TLine* lineSignal1 = new TLine(massSignal1, 0, massSignal1, hMData->GetMaximum()*0.5);
-      TLine* lineSignal2 = new TLine(massSignal2, 0, massSignal2, hMData->GetMaximum()*0.5);
-      TLine* lineSideBand1 = new TLine(massSideBand1, 0, massSideBand1, hMData->GetMaximum()*0.5);
-      TLine* lineSideBand2 = new TLine(massSideBand2, 0, massSideBand2, hMData->GetMaximum()*0.5);
-      TLine* lineSideBand3 = new TLine(massSideBand3, 0, massSideBand3, hMData->GetMaximum()*0.5);
-      TLine* lineSideBand4 = new TLine(massSideBand4, 0, massSideBand4, hMData->GetMaximum()*0.5);
+      TLine* lineSignal1 = new TLine(massSignal1, 0, massSignal1, background->Eval(massSignal1));
+      lineSignal1->SetLineStyle(2);
+      lineSignal1->SetLineWidth(2);
+      lineSignal1->SetLineColor(12);
+      TLine* lineSignal2 = new TLine(massSignal2, 0, massSignal2, background->Eval(massSignal2));
+      lineSignal2->SetLineStyle(2);
+      lineSignal2->SetLineWidth(2);
+      lineSignal2->SetLineColor(12);
+      TLine* lineSideBand1 = new TLine(massSideBand1, 0, massSideBand1, background->Eval(massSideBand1));
+      lineSideBand1->SetLineStyle(2);
+      lineSideBand1->SetLineWidth(2);
+      lineSideBand1->SetLineColor(12);
+      TLine* lineSideBand2 = new TLine(massSideBand2, 0, massSideBand2, background->Eval(massSideBand2));
+      lineSideBand2->SetLineStyle(2);
+      lineSideBand2->SetLineWidth(2);
+      lineSideBand2->SetLineColor(12);
+      TLine* lineSideBand3 = new TLine(massSideBand3, 0, massSideBand3, background->Eval(massSideBand3));
+      lineSideBand3->SetLineStyle(2);
+      lineSideBand3->SetLineWidth(2);
+      lineSideBand3->SetLineColor(12);
+      TLine* lineSideBand4 = new TLine(massSideBand4, 0, massSideBand4, background->Eval(massSideBand4));
+      lineSideBand4->SetLineStyle(2);
+      lineSideBand4->SetLineWidth(2);
+      lineSideBand4->SetLineColor(12);
+
       lineSignal1->Draw();
       lineSignal2->Draw();
       lineSideBand1->Draw();
@@ -228,21 +234,23 @@ void bFeedDownFraction()
       leg1->Draw("same");
 
       texCms->Draw();
-      texCol->Draw();
+      if(isPbPb) texCent->Draw();
       texPtY->Draw();
 
-      c2->SaveAs(Form("plots/PP_%.0f_%.0f_sideBand.pdf",ptLow,ptHigh));
+      c2->SaveAs(Form("plots/%s_%.0f_%.0f_sideBand.pdf",tcoly.Data(),ptLow,ptHigh));
 
+      cout<<"    Yield extraction for each DCA bin ..."<<endl;
       c15->cd(1);
       
       fitMass(hMData, hMMCSignal, hMMCSwapped);
 
       texPt->Draw();
       texY->Draw();
+      texCms->Draw();
+      texCol->Draw();
 
       TH1D* hD0DcaDataFit = new TH1D("hD0DcaDataFit", ";D^{0} DCA (cm);yield per cm", nBinY, binsY);
-
-      for(int j=1; j<=14; j++)
+      for(int j=1; j<=13; j++)
 	{
 	  c15->cd(j+1);
 	  hPtMD0Dca->GetZaxis()->SetRange(j,j);
@@ -259,26 +267,22 @@ void bFeedDownFraction()
 	  hD0DcaDataFit->SetBinError(j, yieldError);
 
 	  TLatex* texD0Dca = new TLatex(0.18,0.82,Form("D^{0} DCA: %1.4f - %1.4f",D0DcaLow,D0DcaHigh));
-	  texD0Dca->SetNDC();
-	  texD0Dca->SetTextFont(42);
-	  texD0Dca->SetTextSize(0.06);
-	  texD0Dca->SetLineWidth(2);
+          settex(texD0Dca,0.06);
 	  texD0Dca->Draw();
 
           TLatex* texYield = new TLatex(0.18,0.74,Form("D^{0} yield: %1.0f #pm %1.0f",yield,yieldError));
-          texYield->SetNDC();
-          texYield->SetTextFont(42);
-          texYield->SetTextSize(0.06);
-          texYield->SetLineWidth(2);
+          settex(texYield,0.06);
           texYield->Draw();
+          if(j==1) texPtTitle->Draw();
+          if(j==2 && isPbPb) texCent->Draw();
+	} 
 
-	}
-
-      c15->SaveAs(Form("plots/PP_%.0f_%.0f_invMassFit.pdf",ptLow,ptHigh));
+      c15->SaveAs(Form("plots/%s_%.0f_%.0f_invMassFit.pdf",tcoly.Data(),ptLow,ptHigh));
 
       divideBinWidth(hD0DcaDataFit);
-
-      c4->cd(1);
+      
+      cout<<"    Fitting DCA distributions ..."<<endl;
+      c6->cd(1);
       gPad->SetLogy();
  
       normalize(hD0DcaMCPSignal);
@@ -297,7 +301,7 @@ void bFeedDownFraction()
       hD0DcaMCNPSignal->Draw("");
       hD0DcaMCPSignal->Draw("same");
 
-      TLegend* leg2 = new TLegend(0.54,0.72,0.90,0.88,NULL,"brNDC");
+      TLegend* leg2 = new TLegend(0.49,0.72,0.90,0.88,NULL,"brNDC");
       leg2->SetBorderSize(0);
       leg2->SetTextSize(0.06);
       leg2->SetTextFont(42);
@@ -305,8 +309,10 @@ void bFeedDownFraction()
       leg2->AddEntry(hD0DcaMCPSignal,"MC Prompt D^{0}","pl");
       leg2->AddEntry(hD0DcaMCNPSignal,"MC Non-prompt D^{0}","pl");
       leg2->Draw("same");
-
-      c4->cd(2);
+      
+      texPtTitle->Draw();
+      
+      c6->cd(2);
       gPad->SetLogy();
       
       TH1D* hD0DcaData = hD0DcaDataFit;
@@ -317,7 +323,6 @@ void bFeedDownFraction()
       ahD0DcaData[i-1] = (TH1D*)hD0DcaData->Clone(Form("hD0DcaData_%d",i-1));
 
       double integralTotalYield = hD0DcaData->Integral(1,hD0DcaData->GetXaxis()->GetNbins(),"width");
-      cout<<"integralTotalYield: "<<integralTotalYield<<endl;
 
       TF1* fMix = new TF1("fMix",&funMix, 0., 0.5, 2);
       fMix->SetParameters(integralTotalYield,0.9);
@@ -344,18 +349,18 @@ void bFeedDownFraction()
 	  fMix->SetParError(1,0.1);
 	  fitResult = hD0DcaData->Fit("fMix","E SNQ0", "", fitRangeL, fitRangeH);
 	  fitStatus = fitResult->Status();
-	  cout<<"fit precision: "<<TFitter::GetPrecision()<<"   status: "<<fitStatus<<endl;
+	  //cout<<"fit precision: "<<TFitter::GetPrecision()<<"   status: "<<fitStatus<<endl;
 	  if(fitStatus)
 	    fitPrecision *= 10;
 	}
-      cout<<"============== do main fit ============"<<endl;
+      // Main fitting
       fMix->SetParameters(integralTotalYield,0.9);
       fMix->SetParError(0,0.1*integralTotalYield);
       fMix->SetParError(1,0.1);
-      fitResult = hD0DcaData->Fit("fMix","E S0", "", fitRangeL, fitRangeH);
+      fitResult = hD0DcaData->Fit("fMix","E S0Q", "", fitRangeL, fitRangeH);
       hD0DcaData->GetFunction("fMix")->Draw("flsame");
       fitStatus = fitResult->Status();
-      cout<<"fit precision: "<<TFitter::GetPrecision()<<"   status: "<<fitStatus<<endl;
+      //cout<<"fit precision: "<<TFitter::GetPrecision()<<"   status: "<<fitStatus<<endl;
 
       TF1* fNP = new TF1("fNP",&funNonPrompt, 0., 0.5, 2);
       fNP->SetParameters(fMix->GetParameter(0),fMix->GetParameter(1));
@@ -367,12 +372,6 @@ void bFeedDownFraction()
    
       hD0DcaData->Draw("same");
 
-            cout<<"NP integral fraction: "<<fNP->Integral(fitRangeL,fitRangeH,1.e-7)/fMix->Integral(fitRangeL,fitRangeH,1.e-7)<<endl;
-      //cout<<"NP integral fraction: "<<fNP->Integral(fitRangeL,fitRangeH,fNP->GetParameters(),1.e-7)/fMix->Integral(fitRangeL,fitRangeH,fNP->GetParameters(),1.e-7)<<endl;
-      cout<<"prompt fraction (real data statistic error only): "<<fMix->GetParameter(1)<<" +- "<<fMix->GetParError(1)<<endl;
-      cout<<"chi2 / NDF: "<<fitResult->Chi2()<<" / "<<fitResult->Ndf()<<endl;
-      cout<<"total yield: "<<integralTotalYield<<" (integral) vs. "<<fMix->GetParameter(0)<<" +- "<<fMix->GetParError(0)<<" (fit)"<<endl;
-
       promptFraction[i-1] = fMix->GetParameter(1);
       promptFractionErrorDataOnly[i-1] = fMix->GetParError(1);
       totalYield[i-1] = fMix->GetParameter(0);
@@ -382,11 +381,8 @@ void bFeedDownFraction()
       texCol->Draw();
       texPtY->Draw();
 
-      TLatex* texRatio = new TLatex(0.47,0.73,Form("Prompt frac. = %.1f #pm %.1f %%",100*fMix->GetParameter(1),100*fMix->GetParError(1)));
-      texRatio->SetNDC();
-      texRatio->SetTextFont(42);
-      texRatio->SetTextSize(0.06);
-      texRatio->SetLineWidth(2);
+      TLatex* texRatio = new TLatex(0.45,0.73,Form("Prompt frac. = %.1f #pm %.1f %%",100*fMix->GetParameter(1),100*fMix->GetParError(1)));
+      settex(texRatio,0.06);
       texRatio->Draw();
       
       TLegend* leg4 = new TLegend(0.56,0.46,0.90,0.7);
@@ -398,9 +394,26 @@ void bFeedDownFraction()
       leg4->AddEntry(fMix,"Prompt D^{0}","f");
       leg4->AddEntry(fNP,"Non-Prompt D^{0}","f");
       leg4->Draw("same");
+      
+      c6->cd(4);
+      fitMass(hMData, hMMCSignal, hMMCSwapped);
 
-      //smear MC smaple with the error, to simulate the MC statistic error effect.
-      c4->cd(3);
+      texCms->Draw();
+      texCol->Draw();
+      texPt->Draw();
+      texY->Draw();
+      texScale->Draw();
+
+      lineSignal1->Draw();
+      lineSignal2->Draw();
+      lineSideBand1->Draw();
+      lineSideBand2->Draw();
+      lineSideBand3->Draw();
+      lineSideBand4->Draw();
+
+      //
+      cout<<"    Smearing Monte-Carlo DCA templates ..."<<endl;
+      c6->cd(3);
       gPad->SetLogy();
 
       hD0DcaMCPSignal = (TH1D*)hD0DcaMCPSignal0->Clone("hMCPSignal");
@@ -415,40 +428,28 @@ void bFeedDownFraction()
 	{
 	  RandomSmear(hD0DcaMCPSignal0, hD0DcaMCPSignal);
 	  RandomSmear(hD0DcaMCNPSignal0, hD0DcaMCNPSignal);
-	  
 	  hD0DcaData->Fit("fMix","E QN0");
-	  
 	  hPromptRatio->Fill(fMix->GetParameter(1));
 	}
       
-      hPromptRatio->GetXaxis()->SetTitle("prompt ratio");
+      hPromptRatio->GetXaxis()->SetTitle("Prompt fraction");
       hPromptRatio->GetYaxis()->SetTitle("counts");
       hPromptRatio->SetMarkerStyle(20);
       hPromptRatio->SetStats(0);
       hPromptRatio->Draw("e");
-      hPromptRatio->Fit("gaus");
+      hPromptRatio->Fit("gaus","q");
       
-      TLatex* texGaussMean = new TLatex(0.27,0.83,Form("#mu: %.3f",hPromptRatio->GetFunction("gaus")->GetParameter(1)));
-      texGaussMean->SetNDC();
-      texGaussMean->SetTextFont(42);
-      texGaussMean->SetTextSize(0.06);
-      texGaussMean->SetLineWidth(2);
-      texGaussMean->Draw();
-      
-      TLatex* texGaussSigma = new TLatex(0.27,0.73,Form("#sigma: %.3f",hPromptRatio->GetFunction("gaus")->GetParameter(2)));
-      texGaussSigma->SetNDC();
-      texGaussSigma->SetTextFont(42);
-      texGaussSigma->SetTextSize(0.06);
-      texGaussSigma->SetLineWidth(2);
+      TLatex* texMCSmear = new TLatex(0.25,0.80,"Smear Monte-Carlo");
+      settex(texMCSmear,0.06);
+      texMCSmear->Draw();
+      TLatex* texGaussMean = new TLatex(0.25,0.70,Form("#mu: %.3f",hPromptRatio->GetFunction("gaus")->GetParameter(1)));
+      settex(texGaussMean,0.06);
+      texGaussMean->Draw();      
+      TLatex* texGaussSigma = new TLatex(0.25,0.60,Form("#sigma: %.3f",hPromptRatio->GetFunction("gaus")->GetParameter(2)));
+      settex(texGaussSigma,0.06);
       texGaussSigma->Draw();
-      
-      float promptFractionErrorMc = hPromptRatio->GetFunction("gaus")->GetParameter(2);
-      promptFractionError[i-1] = sqrt(pow(promptFractionErrorDataOnly[i-1],2)+pow(promptFractionErrorMc,2));
-      cout<<"prompt fraction: "<<promptFraction[i-1]<<" +- "<<promptFractionError[i-1]<<" (+- "<<promptFractionErrorDataOnly[i-1]<<" +- "<<promptFractionErrorMc<<" )"<<endl;
 
-      bToDYield[i-1] = totalYield[i-1]*(1-promptFraction[i-1]);
-      bToDYieldError[i-1] = bToDYield[i-1]*sqrt(pow(promptFractionError[i-1]/(1-promptFraction[i-1]),2) + pow(totalYieldError[i-1]/totalYield[i-1],2));
-      cout<<"B to D yield: "<<bToDYield[i-1]<<" +- "<<bToDYieldError[i-1]<<endl;
+      promptFractionErrorMCSmear[i-1] = hPromptRatio->GetFunction("gaus")->GetParameter(2);
 
       //restore original unsmeared histograms before saving plots
       delete hD0DcaMCPSignal;
@@ -457,7 +458,9 @@ void bFeedDownFraction()
       hD0DcaMCNPSignal = hD0DcaMCNPSignal0;
       hD0DcaData->Fit("fMix","E QN0");
 
-      c4->cd(4);
+      if(isPbPb) texCent->Draw();
+
+      c6->cd(5);
 
       TH1D* hD0DcaDataOverFit = (TH1D*)hD0DcaData->Clone("hD0DcaDataOverFit");
       hD0DcaDataOverFit->Divide(fMix);
@@ -470,66 +473,103 @@ void bFeedDownFraction()
       TF1* fLine1 = new TF1("fLine1", "1", 0,1);
       fLine1->Draw("same");
       hD0DcaDataOverFit->Draw("esame");
+
+      cout<<"    Smearing Data DCA distributions ..."<<endl;
+      c6->cd(6);
+      gPad->SetLogy();
+
+      TH1D* hD0DcaDataSmear = (TH1D*)hD0DcaData->Clone("hD0DcaDataSmear");
+      TH1D* hPromptRatioDataSmear = new TH1D("hPromptRatioDataSmear", "", 100, 0, 1);
+      setColorTitleLabel(hPromptRatioDataSmear, 1);
+
+      int nSmearData = 1000;
+
+      for(int j=0; j<nSmearData; j++)
+	{          
+	  RandomSmear(hD0DcaData, hD0DcaDataSmear);
+	  hD0DcaDataSmear->Fit("fMix","E QN0");
+	  hPromptRatioDataSmear->Fill(fMix->GetParameter(1));
+	}
       
-      c4->SaveAs(Form("plots/PP_%.0f_%.0f_fit.pdf",ptLow,ptHigh));
+      hPromptRatioDataSmear->GetXaxis()->SetTitle("Prompt fraction");
+      hPromptRatioDataSmear->GetYaxis()->SetTitle("counts");
+      hPromptRatioDataSmear->SetMarkerStyle(20);
+      hPromptRatioDataSmear->SetStats(0);
+      hPromptRatioDataSmear->Draw("e");
+      hPromptRatioDataSmear->Fit("gaus","q");
+
+      promptFractionErrorDataSmear[i-1] = hPromptRatioDataSmear->GetFunction("gaus")->GetParameter(2);
+
+      TLatex* texDataSmear = new TLatex(0.25,0.80,"Smear Data");
+      settex(texDataSmear,0.06);
+      texDataSmear->Draw();
+      TLatex* texGaussMeanData = new TLatex(0.25,0.70,Form("#mu: %.3f",hPromptRatioDataSmear->GetFunction("gaus")->GetParameter(1)));
+      settex(texGaussMeanData,0.06);
+      texGaussMeanData->Draw();      
+      TLatex* texGaussSigmaData = new TLatex(0.25,0.60,Form("#sigma: %.3f",hPromptRatioDataSmear->GetFunction("gaus")->GetParameter(2)));
+      settex(texGaussSigmaData,0.06);
+      texGaussSigmaData->Draw();
+
+      c6->SaveAs(Form("plots/%s_%.0f_%.0f_fit.pdf",tcoly.Data(),ptLow,ptHigh));
 
       delete hD0DcaMCPSignal;
       delete hD0DcaMCNPSignal;
+      delete hD0DcaDataSmear;
+      delete hPromptRatio;
+      delete hPromptRatioDataSmear;
+      delete hD0DcaDataFit;
 
+      promptFractionError[i-1] = sqrt(pow(promptFractionErrorDataSmear[i-1],2)+pow(promptFractionErrorMCSmear[i-1],2));
     }
+
+  cout<<endl<<endl<<"  -- Plotting final prompt fractions ..."<<endl;
   c1->cd();
 
-  TH1D* hStupidJie = new TH1D("hStupidJie", "", 100, 0, 100);
-  hStupidJie->GetYaxis()->SetRangeUser(0,1);
-  hStupidJie->GetXaxis()->SetTitle("p_{T} (GeV/c)");
-  hStupidJie->GetYaxis()->SetTitle("prompt fraction");
-  hStupidJie->SetStats(0);
-  hStupidJie->Draw();
-  TGraphErrors* grFraction = new TGraphErrors(nBinX, pts, promptFraction, 0, promptFractionError);
+  TH2F* hempty = new TH2F("hempty",";D^{0} p_{T} (GeV/c);Prompt fraction",10,0,100,10,0,1);
+  sethempty(hempty);
+  hempty->Draw();
+
+  TGraphErrors* grFraction2 = new TGraphErrors(nBinX, pts, promptFraction, ptseF, promptFractionError);
+  grFraction2->SetName("grPromptFraction2");
+  grFraction2->SetLineWidth(0);
+  grFraction2->SetLineColor(16);
+  grFraction2->SetFillStyle(1001);
+  grFraction2->SetFillColor(16);
+  grFraction2->Draw("5same");
+  TGraphErrors* grFraction = new TGraphErrors(nBinX, pts, promptFraction, 0, promptFractionErrorDataOnly);
   grFraction->SetName("grPromptFraction");
   grFraction->SetMarkerStyle(20);
+  grFraction->SetMarkerSize(0.6);  
+  grFraction->SetMarkerColor(kBlack);
   grFraction->Draw("psame");
-
-  TGraphErrors* grFraction2 = new TGraphErrors(nBinX, pts, promptFraction, 0, promptFractionErrorDataOnly);
-  grFraction2->SetName("grPromptFractionErrorFromRealDataOnly");
-  grFraction2->SetMarkerStyle(20);
-  grFraction2->SetMarkerColor(4);
-  grFraction2->SetLineColor(4);
-  grFraction2->Draw("psame");
-
-  TLegend* leg = new TLegend(0.2, 0.3, 0.9, 0.5);
+  TLatex* texcent = new TLatex(0.40,0.52,Form("Cent. %.0f-%.0f%s",centmin,centmax,per.Data()));
+  settex(texcent,0.045);
+  texcent->Draw();
+  TLegend* leg = new TLegend(0.40, 0.37, 0.90, 0.50);
   leg->SetBorderSize(0);
-  leg->SetTextSize(0.04);
+  leg->SetTextSize(0.045);
   leg->SetTextFont(42);
   leg->SetFillStyle(0);
-  leg->AddEntry(grFraction, "statistic error from both real data and MC", "l");
-  leg->AddEntry(grFraction2, "statistic error from real data only", "l");
+  leg->AddEntry(grFraction, "Stats from DCA fitting", "lp");
+  leg->AddEntry(grFraction2, "Stats from data and MC smearing", "f");
   leg->Draw();
-
-  c1->SaveAs("plots/promptFraction.pdf");
-
-  c1->SetLogy();
-  TH1D* hBtoDRawYield = new TH1D("hBtoDRawYield", ";p_{T} (GeV/c);counts per GeV/c", nBinX, binsX);
-  for(int i=1; i<=nBinX; i++)
-    {
-      if(bToDYield[i-1] <= 0) continue;
-      hBtoDRawYield->SetBinContent(i, bToDYield[i-1]);
-      hBtoDRawYield->SetBinError(i, bToDYieldError[i-1]);
-    }
-  divideBinWidth(hBtoDRawYield);
-  setColorTitleLabel(hBtoDRawYield, 1);
-  c1->SetBottomMargin(0.14);
-  hBtoDRawYield->Draw("p");
-  
-  c1->SaveAs("plots/BtoD.pdf");
+ 
+  TLatex* texCmsc1 = new TLatex(0.15,0.95, "#scale[1.25]{CMS} Preliminary");
+  settex(texCmsc1,0.05,12);
+  TLatex* texColc1 = new TLatex(0.96,0.95, Form("%s #sqrt{s_{NN}} = 5.02 TeV",col.Data()));
+  settex(texColc1,0.05,32);
+  TString per = "%";
+  texCmsc1->Draw();
+  texColc1->Draw();
+  c1->SaveAs(Form("plotsResult/%s_PromptFraction.pdf",tcoly.Data()));
 
   TFile* fOut = new TFile("rootfiles/bFeedDownResult.root", "recreate");
   fOut->cd();
   grFraction->Write();
   grFraction2->Write();
-  hBtoDRawYield->Write();
   for(int i=0;i<nBinX;i++) ahD0DcaData[i]->Write();
   for(int i=0;i<nBinX;i++) ahD0DcaMCPSignal[i]->Write();
   for(int i=0;i<nBinX;i++) ahD0DcaMCNPSignal[i]->Write();
   fOut->Close();
+
 }
