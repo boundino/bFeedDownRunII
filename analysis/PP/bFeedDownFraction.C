@@ -1,5 +1,6 @@
 using namespace std;
 #include "bFeedDownFraction.h"
+#include "savehist/project.h"
 
 void bFeedDownFraction()
 {
@@ -86,30 +87,22 @@ void bFeedDownFraction()
   texCol->SetTextSize(0.06);
   texCol->SetTextFont(42);
 
-  const int nPtBins = 14;
-  float pts[nPtBins];
-  float promptFraction[nPtBins];
-  float promptFractionError[nPtBins];
-  float promptFractionErrorDataOnly[nPtBins];
-  float totalYield[nPtBins];
-  float totalYieldError[nPtBins];
-  float bToDYield[nPtBins];
-  float bToDYieldError[nPtBins];
-
-  const int nBinY = 14;
-  Float_t binsY[nBinY+1];
-  float firstBinYWidth = 0.001;
-  float binYWidthRatio = 1.27;
+  float pts[nBinX];
+  float promptFraction[nBinX];
+  float promptFractionError[nBinX];
+  float promptFractionErrorDataOnly[nBinX];
+  float totalYield[nBinX];
+  float totalYieldError[nBinX];
+  float bToDYield[nBinX];
+  float bToDYieldError[nBinX];
   binsY[0]=0;
-  for(int i=1; i<=nBinY; i++)
-    binsY[i] = binsY[i-1]+firstBinYWidth*pow(binYWidthRatio,i-1);
-  cout<<"last y bin: "<<binsY[nBinY]<<endl;
+  for(int i=1;i<=nBinY;i++) binsY[i] = binsY[i-1]+firstBinYWidth*pow(binYWidthRatio,i-1);
 
-  TH1D** ahD0DcaData = new TH1D*[nPtBins];
-  TH1D** ahD0DcaMCPSignal = new TH1D*[nPtBins];
-  TH1D** ahD0DcaMCNPSignal = new TH1D*[nPtBins];
+  TH1D** ahD0DcaData = new TH1D*[nBinX];
+  TH1D** ahD0DcaMCPSignal = new TH1D*[nBinX];
+  TH1D** ahD0DcaMCNPSignal = new TH1D*[nBinX];
 
-  for(int i=1; i<=nPtBins; i++)
+  for(int i=1; i<=nBinX; i++)
     {
       pts[i-1] = hData->GetXaxis()->GetBinCenter(i);
       float ptLow = hData->GetXaxis()->GetBinLowEdge(i);
@@ -492,12 +485,12 @@ void bFeedDownFraction()
   hStupidJie->GetYaxis()->SetTitle("prompt fraction");
   hStupidJie->SetStats(0);
   hStupidJie->Draw();
-  TGraphErrors* grFraction = new TGraphErrors(nPtBins, pts, promptFraction, 0, promptFractionError);
+  TGraphErrors* grFraction = new TGraphErrors(nBinX, pts, promptFraction, 0, promptFractionError);
   grFraction->SetName("grPromptFraction");
   grFraction->SetMarkerStyle(20);
   grFraction->Draw("psame");
 
-  TGraphErrors* grFraction2 = new TGraphErrors(nPtBins, pts, promptFraction, 0, promptFractionErrorDataOnly);
+  TGraphErrors* grFraction2 = new TGraphErrors(nBinX, pts, promptFraction, 0, promptFractionErrorDataOnly);
   grFraction2->SetName("grPromptFractionErrorFromRealDataOnly");
   grFraction2->SetMarkerStyle(20);
   grFraction2->SetMarkerColor(4);
@@ -516,9 +509,8 @@ void bFeedDownFraction()
   c1->SaveAs("plots/promptFraction.pdf");
 
   c1->SetLogy();
-  float ptBins[nPtBins+1] = {2.,3.,4.,5.,6.,8.,10.,12.5,15.0,20.,25.,30.,40.,60.,100};
-  TH1D* hBtoDRawYield = new TH1D("hBtoDRawYield", ";p_{T} (GeV/c);counts per GeV/c", nPtBins, ptBins);
-  for(int i=1; i<=nPtBins; i++)
+  TH1D* hBtoDRawYield = new TH1D("hBtoDRawYield", ";p_{T} (GeV/c);counts per GeV/c", nBinX, binsX);
+  for(int i=1; i<=nBinX; i++)
     {
       if(bToDYield[i-1] <= 0) continue;
       hBtoDRawYield->SetBinContent(i, bToDYield[i-1]);
@@ -536,8 +528,8 @@ void bFeedDownFraction()
   grFraction->Write();
   grFraction2->Write();
   hBtoDRawYield->Write();
-  for(int i=0;i<nPtBins;i++) ahD0DcaData[i]->Write();
-  for(int i=0;i<nPtBins;i++) ahD0DcaMCPSignal[i]->Write();
-  for(int i=0;i<nPtBins;i++) ahD0DcaMCNPSignal[i]->Write();
+  for(int i=0;i<nBinX;i++) ahD0DcaData[i]->Write();
+  for(int i=0;i<nBinX;i++) ahD0DcaMCPSignal[i]->Write();
+  for(int i=0;i<nBinX;i++) ahD0DcaMCNPSignal[i]->Write();
   fOut->Close();
 }

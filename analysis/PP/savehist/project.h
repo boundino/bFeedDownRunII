@@ -27,7 +27,8 @@ TCut cutNonPrompt ="DgenBAncestorpt>0";
 const int nBinX = 14;
 Float_t binsX[nBinX+1] = {2.,3.,4.,5.,6.,8.,10.,12.5,15.0,20.,25.,30.,40.,60.,100};
 
-const int nBinY = 20;
+const int nBinY = 14;
+//const int nBinY = 20;
 Float_t binsY[nBinY+1];
 float firstBinYWidth = 0.001;
 float binYWidthRatio = 1.27;
