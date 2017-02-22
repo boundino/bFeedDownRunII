@@ -20,7 +20,7 @@ cp ../bFeedDownFraction.* .
 
 if [ $DO_PROJECT -eq 1 ]; then
     cd savehist/
-    SAMPLES=("PPMC" "PPMBMC" "PP" "PPMB")
+    SAMPLES=("${COL}MC" "${COL}MBMC" "${COL}" "${COL}MB")
     for i in ${SAMPLES[@]}
     do
         root -l -b -q "project${i}.C+("\"$i\"")"

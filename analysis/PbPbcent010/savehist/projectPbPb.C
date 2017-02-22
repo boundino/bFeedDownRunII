@@ -1,5 +1,6 @@
 #include "project.h"
-void projectPbPb(TString col)
+
+void projectPbPb(TString col, Float_t centmin=0, Float_t centmax=100)
 {
   TFile* inf = new TFile(inputdataPbPb);
   TTree* tData = (TTree*)inf->Get("ntDkpi");

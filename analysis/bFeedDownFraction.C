@@ -25,9 +25,9 @@ void bFeedDownFraction(TString col, Float_t centmin=0, Float_t centmax=100)
 
   TCanvas* c6 = new TCanvas("c6","",1200,600);
   c6->Divide(3,2);   
-  TCanvas* c2 = new TCanvas("c2","",450,600);
+  TCanvas* c2 = new TCanvas("c2","",400,600);
   c2->Divide(1,2);
-  TCanvas* c1 = new TCanvas("c1","",400,300);
+  TCanvas* c1 = new TCanvas("c1","",500,400);
   TCanvas* c15 = new TCanvas("c15","",810,1000);
   c15->Divide(3,5);
 
@@ -79,7 +79,7 @@ void bFeedDownFraction(TString col, Float_t centmin=0, Float_t centmax=100)
   TLatex* texCol = new TLatex(0.96,0.95, Form("%s #sqrt{s_{NN}} = 5.02 TeV",col.Data()));
   settex(texCol,0.06,32);
   TString per = "%";
-  TLatex* texCent = new TLatex(0.96,0.95, Form("%.0f-%.0f%s",centmin,centmax,per.Data()));
+  TLatex* texCent = new TLatex(0.96,0.95, Form("Cent. %.0f-%.0f%s",centmin,centmax,per.Data()));
   settex(texCent,0.06,32);
 
   float pts[nBinX];
@@ -542,10 +542,10 @@ void bFeedDownFraction(TString col, Float_t centmin=0, Float_t centmax=100)
   grFraction->SetMarkerSize(0.6);  
   grFraction->SetMarkerColor(kBlack);
   grFraction->Draw("psame");
-  TLatex* texcent = new TLatex(0.40,0.52,Form("Cent. %.0f-%.0f%s",centmin,centmax,per.Data()));
+  TLatex* texcent = new TLatex(0.35,0.54,Form("Cent. %.0f-%.0f%s",centmin,centmax,per.Data()));
   settex(texcent,0.045);
-  texcent->Draw();
-  TLegend* leg = new TLegend(0.40, 0.37, 0.90, 0.50);
+  if(isPbPb) texcent->Draw();
+  TLegend* leg = new TLegend(0.33, 0.37, 0.75, 0.50);
   leg->SetBorderSize(0);
   leg->SetTextSize(0.045);
   leg->SetTextFont(42);
@@ -554,11 +554,10 @@ void bFeedDownFraction(TString col, Float_t centmin=0, Float_t centmax=100)
   leg->AddEntry(grFraction2, "Stats from data and MC smearing", "f");
   leg->Draw();
  
-  TLatex* texCmsc1 = new TLatex(0.15,0.95, "#scale[1.25]{CMS} Preliminary");
+  TLatex* texCmsc1 = new TLatex(0.14,0.94, "#scale[1.25]{CMS} Preliminary");
   settex(texCmsc1,0.05,12);
-  TLatex* texColc1 = new TLatex(0.96,0.95, Form("%s #sqrt{s_{NN}} = 5.02 TeV",col.Data()));
+  TLatex* texColc1 = new TLatex(0.96,0.94, Form("%s #sqrt{s_{NN}} = 5.02 TeV",col.Data()));
   settex(texColc1,0.05,32);
-  TString per = "%";
   texCmsc1->Draw();
   texColc1->Draw();
   c1->SaveAs(Form("plotsResult/%s_PromptFraction.pdf",tcoly.Data()));
