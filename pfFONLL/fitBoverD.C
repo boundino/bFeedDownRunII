@@ -5,6 +5,7 @@ using namespace std;
 void fitBoverD(TString output)
 {
   setgstyle();
+  fillptbins(true);
   const int nPtBinsD = 9;
   Float_t ptBinsD[nPtBinsD+1] = {6.,8.,10.,12.5,15.,20.,25.,30.,40.,60.};
   ifstream infD("dats/RAA_D_0100.dat");
@@ -34,8 +35,8 @@ void fitBoverD(TString output)
       heBRAAs[i] = -BRAAs[i]+heBRAAs[i];      
     }
   TGraphAsymmErrors* grBRAA = new TGraphAsymmErrors(nPtBinsB,ptB,BRAAs,eptB,eptB,leBRAAs,heBRAAs);  
-  grBRAA->SetFillStyle(3001);
-  grBRAA->SetFillColor(kAzure-2);
+  grBRAA->SetFillStyle(1001);
+  grBRAA->SetFillColor(kAzure-9);
   grBRAA->SetLineWidth(0);
   TGraphAsymmErrors* grDRAA = new TGraphAsymmErrors(nPtBinsD,ptD,DRAAs,eptD,eptD,leDRAAs,heDRAAs);
   settgraphasymmerrors(grDRAA);
@@ -64,16 +65,29 @@ void fitBoverD(TString output)
 
   cBoverD->cd(2);
   TH1F* hBoverDh = new TH1F("hBoverDh","",nPtBins,ptBins);
-  hBoverDh->SetLineColor(kRed);
+  hBoverDh->SetLineColor(kBlack);
   TH1F* hBoverDl = new TH1F("hBoverDl","",nPtBins,ptBins);
-  hBoverDl->SetLineColor(kRed);
+  hBoverDl->SetLineColor(kBlack);
+  TH1F* hBoverDhDa = new TH1F("hBoverDhDa","",nPtBins,ptBins);
+  hBoverDhDa->SetLineColor(kBlack);
+  TH1F* hBoverDlDa = new TH1F("hBoverDlDa","",nPtBins,ptBins);
+  hBoverDlDa->SetLineColor(kBlack);
+  Float_t apts[nPtBins],aptse[nPtBins],aBD13[nPtBins],aBD13e[nPtBins],aBDDa[nPtBins],aBDDae[nPtBins];
   for(int i=0;i<nPtBins;i++)
     {
       Float_t apt = (ptBins[i]+ptBins[i+1])/2.;
+      apts[i] = apt;
+      aptse[i] = -(ptBins[i]-ptBins[i+1])/2.;
       if(ptBins[i]<8. || ptBins[i+1]>60.)
         {
+          aBD13[i] = (3+1)/2.;
+          aBD13e[i] = (3-1)/2.;
           hBoverDh->SetBinContent(i+1,3);
           hBoverDl->SetBinContent(i+1,1);
+          aBDDa[i] = -1;
+          aBDDae[i] = 0;
+          hBoverDhDa->SetBinContent(i+1,-1);
+          hBoverDlDa->SetBinContent(i+1,-1);
         }
       else
         {
@@ -87,14 +101,33 @@ void fitBoverD(TString output)
               cout<<"  Error: Over B RAA range."<<endl;
               continue;
             }
+          aBD13[i] = -1;
+          aBD13e[i] = 0;
           hBoverDh->SetBinContent(i+1,hBRAAh->GetBinContent(j+1)/fDRAA->Eval(apt));
           hBoverDl->SetBinContent(i+1,hBRAAl->GetBinContent(j+1)/fDRAA->Eval(apt));
+          aBDDa[i] = (hBRAAh->GetBinContent(j+1)/fDRAA->Eval(apt)+hBRAAl->GetBinContent(j+1)/fDRAA->Eval(apt))/2.;
+          aBDDae[i] = (hBRAAh->GetBinContent(j+1)/fDRAA->Eval(apt)-hBRAAl->GetBinContent(j+1)/fDRAA->Eval(apt))/2.;
+          hBoverDhDa->SetBinContent(i+1,hBRAAh->GetBinContent(j+1)/fDRAA->Eval(apt));
+          hBoverDlDa->SetBinContent(i+1,hBRAAl->GetBinContent(j+1)/fDRAA->Eval(apt));
         }
     }
+  TGraphErrors* grBD13 = new TGraphErrors(nPtBins,apts,aBD13,aptse,aBD13e);
+  grBD13->SetName("grBD13");
+  grBD13->SetFillStyle(1001);
+  grBD13->SetFillColor(kRed-7);
+  grBD13->SetLineColor(kRed-7);
+  TGraphErrors* grBDDa = new TGraphErrors(nPtBins,apts,aBDDa,aptse,aBDDae);
+  grBDDa->SetName("grBDDa");
+  grBDDa->SetFillStyle(1001);
+  grBDDa->SetFillColor(kAzure-9);
+  grBDDa->SetLineColor(kAzure-9);
+
   TH2F* hempty2 = new TH2F("hempty2",";p_{T} (GeV/c);R_{AA}(B) / R_{AA}(D)",10,0,102,10,0,3.5);
   sethempty(hempty2);
 
   hempty2->Draw();
+  grBD13->Draw("5same");
+  grBDDa->Draw("5same");
   hBoverDh->Draw("same");
   hBoverDl->Draw("same");
   drawCMS("PbPb");
@@ -105,6 +138,8 @@ void fitBoverD(TString output)
   outputfile->cd();
   hBoverDh->Write();
   hBoverDl->Write();
+  hBoverDhDa->Write();
+  hBoverDlDa->Write();
   outputfile->Close();
 
   TCanvas* cFit = new TCanvas("cFit","",600,600);
@@ -117,6 +152,8 @@ void fitBoverD(TString output)
   cFit->SaveAs("plots/cBoverD_Fit.pdf");
   TCanvas* cResult = new TCanvas("cResult","",600,600);
   hempty2->Draw();
+  grBD13->Draw("5same");
+  grBDDa->Draw("5same");
   hBoverDh->Draw("same");
   hBoverDl->Draw("same");
   drawCMS("PbPb");
