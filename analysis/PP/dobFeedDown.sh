@@ -1,14 +1,22 @@
 #!/bin/bash
+
 DO_PROJECT=$1
 DO_FIT=$2
+COL="PP"
 
-FOLDERS=("plots" "rootfiles")
+##
+
+FOLDERS=("plots" "plotsResult" "rootfiles")
 for i in ${FOLDERS[@]}
 do
     if [ ! -d $i ]; then
         mkdir $i
     fi
 done
+
+#
+cp ../../uti.h .
+cp ../bFeedDownFraction.* .
 
 if [ $DO_PROJECT -eq 1 ]; then
     cd savehist/
@@ -21,5 +29,8 @@ if [ $DO_PROJECT -eq 1 ]; then
 fi
 
 if [ $DO_FIT -eq 1 ]; then
-    root -l -b -q "bFeedDownFraction.C+"
+    root -l -b -q "bFeedDownFraction.C+("\"$COL\"")"
 fi
+
+rm bFeedDownFraction.*
+rm uti.h
