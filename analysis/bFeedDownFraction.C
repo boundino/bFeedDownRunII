@@ -571,4 +571,10 @@ void bFeedDownFraction(TString col, Float_t centmin=0, Float_t centmax=100)
   for(int i=0;i<nBinX;i++) ahD0DcaMCNPSignal[i]->Write();
   fOut->Close();
 
+  cout<<endl<<" -- Final result"<<endl;
+  cout<<"    ";
+  for(int i=0;i<nBinX;i++) cout<<promptFraction[i]<<", ";
+  cout<<endl;
+  cout<<endl;
+
 }
