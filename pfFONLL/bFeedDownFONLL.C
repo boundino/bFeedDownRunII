@@ -5,10 +5,11 @@ using namespace std;
 void bFeedDownFONLL(TString coly, TString outputFonllP, TString outputFonllNP, TString outputEffP, TString outputEffNP, TString outputBRAA, TString outputFraction, Float_t centmin=0, Float_t centmax=100)
 {
   Bool_t isPbPb = (coly=="PbPb")?true:false;
+  fillptbins(isPbPb);
 
-  TFile* inputFileFonllP = new TFile(outputFonllP);
-  TFile* inputFileFonllNP = new TFile(outputFonllNP);
   TString tcoly = isPbPb?Form("%s_cent_%.0f_%.0f",coly.Data(),centmin,centmax):Form("%s",coly.Data());
+  TFile* inputFileFonllP = new TFile(Form("%s_%s.root",outputFonllP.Data(),tcoly.Data()));
+  TFile* inputFileFonllNP = new TFile(Form("%s_%s.root",outputFonllNP.Data(),tcoly.Data()));
   TFile* inputFileEffP = new TFile(Form("%s_%s.root",outputEffP.Data(),tcoly.Data()));
   TFile* inputFileEffNP = new TFile(Form("%s_%s.root",outputEffNP.Data(),tcoly.Data()));
   TFile* inputBRAA = new TFile(outputBRAA);
@@ -18,12 +19,14 @@ void bFeedDownFONLL(TString coly, TString outputFonllP, TString outputFonllNP, T
   TGraphAsymmErrors* gFonllP = (TGraphAsymmErrors*)inputFileFonllP->Get("gaeSigmaDzero");   gFonllP->SetName("gFonllP");
   TGraphAsymmErrors* gFonllNP = (TGraphAsymmErrors*)inputFileFonllNP->Get("gaeSigmaDzero"); gFonllNP->SetName("gFonllNP");
   TGraphAsymmErrors* grFraction = (TGraphAsymmErrors*)gFonllP->Clone("grPromptFraction");
-  TGraphAsymmErrors* grFraction3 = (TGraphAsymmErrors*)gFonllP->Clone("grPromptFraction");
-  TH1D* hFraction = new TH1D("hFraction","",nPtBins,ptBins);
-  TH1D* hFraction3 = new TH1D("hFraction3","",nPtBins,ptBins);
-  grFraction3->SetName("grPromptFraction3");
+  TGraphAsymmErrors* grFraction3 = (TGraphAsymmErrors*)gFonllP->Clone("grPromptFraction3");
+  TGraphAsymmErrors* grFractionDa = (TGraphAsymmErrors*)gFonllP->Clone("grPromptFractionDa");
+  TGraphAsymmErrors* grFraction3Da = (TGraphAsymmErrors*)gFonllP->Clone("grPromptFraction3Da");
+
   TH1F* hBoverDh = (TH1F*)inputBRAA->Get("hBoverDh");
   TH1F* hBoverDl = (TH1F*)inputBRAA->Get("hBoverDl");
+  TH1F* hBoverDhDa = (TH1F*)inputBRAA->Get("hBoverDhDa");
+  TH1F* hBoverDlDa = (TH1F*)inputBRAA->Get("hBoverDlDa");
 
   for(int i=0;i<nPtBins;i++)
     {
@@ -46,22 +49,38 @@ void bFeedDownFONLL(TString coly, TString outputFonllP, TString outputFonllNP, T
       Double_t nfNPErrh = TMath::Sqrt(fonllNPErrh*fonllNPErrh+effNPErr*effNPErr);
       Double_t pFraction = nfP/(nfP+nfNP*hBoverDl->GetBinContent(i+1));
       Double_t pFraction3 = nfP/(nfP+nfNP*hBoverDh->GetBinContent(i+1));
-      //Double_t pFractionErrl = TMath::Sqrt(nfPErrl*nfPErrl+(nfPErrl*nfPErrl*nfNP*nfNP+nfNPErrh*nfNPErrh*nfP*nfP)/((nfP+nfNP)*(nfP+nfNP)));
-      //Double_t pFractionErrh = TMath::Sqrt(nfPErrh*nfPErrh+(nfPErrh*nfPErrh*nfNP*nfNP+nfNPErrl*nfNPErrl*nfP*nfP)/((nfP+nfNP)*(nfP+nfNP)));
+      Double_t pFractionDa = nfP/(nfP+nfNP*hBoverDl->GetBinContent(i+1));
+      Double_t pFraction3Da = nfP/(nfP+nfNP*hBoverDh->GetBinContent(i+1));
+      if(!isPbPb)
+        {
+          pFraction = nfP/(nfP+nfNP);
+          pFraction3 = nfP/(nfP+nfNP);
+        }
+
       grFraction->SetPoint(i,pt,pFraction);
       grFraction->SetPointEYlow(i,0);
       grFraction->SetPointEYhigh(i,0);
       grFraction3->SetPoint(i,pt,pFraction3);
       grFraction3->SetPointEYlow(i,0);
       grFraction3->SetPointEYhigh(i,0);
-      hFraction->SetBinContent(i+1,pFraction);
-      hFraction3->SetBinContent(i+1,pFraction3);
+      grFractionDa->SetPoint(i,pt,pFraction);
+      grFractionDa->SetPointEYlow(i,0);
+      grFractionDa->SetPointEYhigh(i,0);
+      grFraction3Da->SetPoint(i,pt,pFraction3);
+      grFraction3Da->SetPointEYlow(i,0);
+      grFraction3Da->SetPointEYhigh(i,0);
+      if(hBoverDlDa->GetBinContent(i+1)<0 && isPbPb)
+        {
+          grFractionDa->SetPoint(i,pt,-1);
+          grFraction3Da->SetPoint(i,pt,-1);
+        }
     }
+
   TFile* fout = new TFile(Form("%s_%s.root",outputFraction.Data(),tcoly.Data()), "recreate");
   grFraction->Write();
   grFraction3->Write();
-  hFraction->Write();
-  hFraction3->Write();
+  grFractionDa->Write();
+  grFraction3Da->Write();
   fout->Close();
 
 }

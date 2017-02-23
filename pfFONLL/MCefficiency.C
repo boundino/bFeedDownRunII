@@ -8,6 +8,7 @@ void MCefficiency(TString coly, TString inputmc, TString outputfile, TString sel
   Bool_t isPbPb = (coly=="PbPb")?true:false;
   selmcgen = isPbPb?Form("%s&&hiBin>=(2*%f)&&hiBin<=(2*%f)",selmcgen.Data(),centmin,centmax):Form("%s",selmcgen.Data());
   cut = isPbPb?Form("%s&&hiBin>=(2*%f)&&hiBin<=(2*%f)",cut.Data(),centmin,centmax):Form("%s",cut.Data());
+  fillptbins(isPbPb);
 
   TFile* infMC = new TFile(inputmc.Data());
   TTree* ntMC = (TTree*)infMC->Get("ntDkpi");

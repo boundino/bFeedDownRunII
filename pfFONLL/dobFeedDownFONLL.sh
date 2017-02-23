@@ -83,8 +83,8 @@ cp ../uti.h .
 
 if [ $DO_FONLL -eq 1 ]; then 
 g++ fonllDsigmadpt.C $(root-config --cflags --libs) -g -o fonllDsigmadpt.exe 
-./fonllDsigmadpt.exe "$INPUTFONLLP" "$OUTPUTFONLLP"
-./fonllDsigmadpt.exe "$INPUTFONLLNP" "$OUTPUTFONLLNP"
+./fonllDsigmadpt.exe "$COLY" "$INPUTFONLLP" "$OUTPUTFONLLP" "$CENTMIN" "$CENTMAX"
+./fonllDsigmadpt.exe "$COLY" "$INPUTFONLLNP" "$OUTPUTFONLLNP" "$CENTMIN" "$CENTMAX"
 rm fonllDsigmadpt.exe
 fi
 

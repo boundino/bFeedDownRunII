@@ -16,6 +16,7 @@ void plotFractions(TString coly, TString outputFraction, Float_t centmin=0, Floa
   gStyle->SetTitleX(.0f);
 
   Bool_t isPbPb = (coly=="PbPb")?true:false;
+  fillptbins(isPbPb);
   TString tcoly = isPbPb?Form("%s_cent_%.0f_%.0f",coly.Data(),centmin,centmax):Form("%s",coly.Data());
   TFile* inputfile = new TFile(Form("%s_%s.root",outputFraction.Data(),tcoly.Data()));
   TGraphAsymmErrors* grFraction = (TGraphAsymmErrors*)inputfile->Get("grPromptFraction");

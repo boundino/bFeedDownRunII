@@ -16,6 +16,7 @@ void plotPnNP(TString coly, TString outputfileP, TString outputfileNP, Float_t c
   gStyle->SetTitleX(.0f);
 
   Bool_t isPbPb = (coly=="PbPb")?true:false;
+  fillptbins(isPbPb);
   TString tcolyend = isPbPb?Form("%s_cent_%.0f_%.0f",coly.Data(),centmin,centmax):Form("%s",coly.Data());
   TFile* infP = new TFile(Form("%s_%s.root",outputfileP.Data(),tcolyend.Data()));
   TFile* infNP = new TFile(Form("%s_%s.root",outputfileNP.Data(),tcolyend.Data()));

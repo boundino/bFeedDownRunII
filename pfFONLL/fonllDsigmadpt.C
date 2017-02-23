@@ -2,7 +2,7 @@ using namespace std;
 #include "uti.h"
 #include "parameters.h"
 
-void fonllDsigmadpt(TString inputFONLL="fonlls/FONLL_pp_promptDzero_5TeV_y1.dat", TString outputFONLL="outfiles/FONLL_pp_promptDzero_5TeV_y1.root")
+void fonllDsigmadpt(TString col, TString inputFONLL="fonlls/FONLL_pp_promptDzero_5TeV_y1.dat", TString outputFONLL="outfiles/FONLL_pp_promptDzero_5TeV_y1", Float_t centmin=0, Float_t centmax=100)
 {
   gStyle->SetOptTitle(0);
   gStyle->SetOptStat(0);
@@ -14,6 +14,10 @@ void fonllDsigmadpt(TString inputFONLL="fonlls/FONLL_pp_promptDzero_5TeV_y1.dat"
   gStyle->SetPadTopMargin(0.1);
   gStyle->SetPadBottomMargin(0.145);
   gStyle->SetTitleX(.0f);
+
+  Bool_t isPbPb = (col=="PbPb")?true:false;
+  fillptbins(isPbPb);
+  TString coly = isPbPb?Form("%s_cent_%.0f_%.0f",col.Data(),centmin,centmax):Form("%s",col.Data());
 
   TString tlabel = inputFONLL;
   tlabel.ReplaceAll("fonlls/","");
@@ -167,7 +171,7 @@ void fonllDsigmadpt(TString inputFONLL="fonlls/FONLL_pp_promptDzero_5TeV_y1.dat"
   gaeSigmaDzero->SetName("gaeSigmaDzero");
   cFonll->SaveAs(Form("plots/c%s.pdf",tlabel.Data()));
   
-  TFile* foutput = new TFile(outputFONLL.Data(),"recreate");
+  TFile* foutput = new TFile(Form("%s_%s.root",outputFONLL.Data(),coly.Data()),"recreate");
   foutput->cd();
   gaeSigma->Write();
   gaeSigmaDzero->Write();
@@ -179,9 +183,14 @@ void fonllDsigmadpt(TString inputFONLL="fonlls/FONLL_pp_promptDzero_5TeV_y1.dat"
 
 int main(int argc, char *argv[])
 {
-  if(argc==3)
+  if(argc==6)
     {
-      fonllDsigmadpt(argv[1], argv[2]);
+      fonllDsigmadpt(argv[1], argv[2], argv[3],atof(argv[4]),atof(argv[5]));
+      return 0;
+    }
+  else if(argc==4)
+    {
+      fonllDsigmadpt(argv[1], argv[2], argv[3]);
       return 0;
     }
   else
