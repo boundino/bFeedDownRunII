@@ -1,16 +1,17 @@
 #!/bin/bash
-CENTMIN=0
-CENTMAX=10
 
 DO_TRUEFRACTIONS=$1
 DO_TRUEFRACTIONS_PPMB=1
 DO_TRUEFRACTIONS_PP=1
-DO_TRUEFRACTIONS_PbPbMB=1
-DO_TRUEFRACTIONS_PbPb=1
+DO_TRUEFRACTIONS_PbPbMB_0100=1
+DO_TRUEFRACTIONS_PbPb_0100=1
+DO_TRUEFRACTIONS_PbPbMB_010=1
+DO_TRUEFRACTIONS_PbPb_010=1
 
 DO_COMPARE=$2
-DO_COMPARE_PP=0
-DO_COMPARE_PbPb=1
+DO_COMPARE_PP=1
+DO_COMPARE_PbPb_0100=1
+DO_COMPARE_PbPb_010=1
 
 ##
 
@@ -24,8 +25,10 @@ INPUTMCPPNP="/data/HeavyFlavourRun2/MC2015/Dntuple/pp/ntD_EvtBase_20160513_Dfind
 INPUTMCPbPbP="/data/HeavyFlavourRun2/MC2015/Dntuple/PbPb/ntD_EvtBase_20160513_DfinderMC_PbPb_20160502_dPt1tkPt0p5_D0_prompt_Dpt2Dy1p1tkPt0p7tkEta2Decay2p9Dalpha0p14Skim_pthatweight.root"
 INPUTMCPbPbNP="/data/HeavyFlavourRun2/MC2015/Dntuple/PbPb/ntD_EvtBase_20160513_DfinderMC_PbPb_20160502_dPt1tkPt0p5_D0_nonprompt_Dpt2Dy1p1tkPt0p7tkEta2Decay2p9Dalpha0p14Skim_pthatweight.root"
 
-WEIGHTPPMB="((pthatweight)*(0.0116437+Dgenpt*(0.0602697)+Dgenpt*Dgenpt*(-0.00226879)+Dgenpt*Dgenpt*Dgenpt*(3.91035e-05)+Dgenpt*Dgenpt*Dgenpt*Dgenpt*(-3.0699e-07)+Dgenpt*Dgenpt*Dgenpt*Dgenpt*Dgenpt*(8.73234e-10)))"
-WEIGHTPP="((pthatweight)*(0.0116437+Dgenpt*(0.0602697)+Dgenpt*Dgenpt*(-0.00226879)+Dgenpt*Dgenpt*Dgenpt*(3.91035e-05)+Dgenpt*Dgenpt*Dgenpt*Dgenpt*(-3.0699e-07)+Dgenpt*Dgenpt*Dgenpt*Dgenpt*Dgenpt*(8.73234e-10)))"
+#WEIGHTPPMB="((pthatweight)*(0.0116437+Dgenpt*(0.0602697)+Dgenpt*Dgenpt*(-0.00226879)+Dgenpt*Dgenpt*Dgenpt*(3.91035e-05)+Dgenpt*Dgenpt*Dgenpt*Dgenpt*(-3.0699e-07)+Dgenpt*Dgenpt*Dgenpt*Dgenpt*Dgenpt*(8.73234e-10)))"
+WEIGHTPPMB="(1)"
+#WEIGHTPP="((pthatweight)*(0.0116437+Dgenpt*(0.0602697)+Dgenpt*Dgenpt*(-0.00226879)+Dgenpt*Dgenpt*Dgenpt*(3.91035e-05)+Dgenpt*Dgenpt*Dgenpt*Dgenpt*(-3.0699e-07)+Dgenpt*Dgenpt*Dgenpt*Dgenpt*Dgenpt*(8.73234e-10)))"
+WEIGHTPP="(1)"
 #WEIGHTPbPbMB="((pthatweight)*(6.14981+hiBin*(-0.156513)+hiBin*hiBin*(0.00149127)+hiBin*hiBin*hiBin*(-6.29087e-06)+hiBin*hiBin*hiBin*hiBin*(9.90029e-09))*(-0.00600791+Dgenpt*(0.0838585)+Dgenpt*Dgenpt*(-0.00991096)+Dgenpt*Dgenpt*Dgenpt*(0.000496019)+Dgenpt*Dgenpt*Dgenpt*Dgenpt*(-8.50065e-06)))"
 WEIGHTPbPbMB="(1)"
 #WEIGHTPbPb="((pthatweight)*(6.14981+hiBin*(-0.156513)+hiBin*hiBin*(0.00149127)+hiBin*hiBin*hiBin*(-6.29087e-06)+hiBin*hiBin*hiBin*hiBin*(9.90029e-09)))"
@@ -71,15 +74,35 @@ if [ $DO_TRUEFRACTIONS -eq 1 ]; then
         rm trueFprompt_tmp.cc
     fi
     
-    if [ $DO_TRUEFRACTIONS_PbPbMB -eq 1 ]; then
-        sed '1iconst int nPtBins = 9; float ptbin[nPtBins+1] = {2.,3.,4.,5.,6.,8.,10.,12.5,15.,20.};' trueFprompt.cc > trueFprompt_tmp.cc
+    CENTMIN=0
+    CENTMAX=100
+    if [ $DO_TRUEFRACTIONS_PbPbMB_0100 -eq 1 ]; then
+        sed '1iconst int nPtBins = 8; float ptbin[nPtBins+1] = {2.,4.,5.,6.,8.,10.,12.5,15.,20.};' trueFprompt.cc > trueFprompt_tmp.cc
         g++ trueFprompt_tmp.cc $(root-config --cflags --libs) -g -o trueFprompt_tmp.exe 
         ./trueFprompt_tmp.exe "$TCOLPbPbMB" "$INPUTMCPbPbP" "$INPUTMCPbPbNP" "$WEIGHTPbPbMB" "$CUTPbPbMB" "$OUTPUTFILES" "$CENTMIN" "$CENTMAX"
         rm trueFprompt_tmp.exe
         rm trueFprompt_tmp.cc
     fi
     
-    if [ $DO_TRUEFRACTIONS_PbPb -eq 1 ]; then
+    if [ $DO_TRUEFRACTIONS_PbPb_0100 -eq 1 ]; then
+        sed '1iconst int nPtBins = 5; float ptbin[nPtBins+1] = {20.,25.,30.,40.,60.,100.};' trueFprompt.cc > trueFprompt_tmp.cc
+        g++ trueFprompt_tmp.cc $(root-config --cflags --libs) -g -o trueFprompt_tmp.exe 
+        ./trueFprompt_tmp.exe "$TCOLPbPb" "$INPUTMCPbPbP" "$INPUTMCPbPbNP" "$WEIGHTPbPb" "$CUTPbPb" "$OUTPUTFILES" "$CENTMIN" "$CENTMAX"
+        rm trueFprompt_tmp.exe
+        rm trueFprompt_tmp.cc
+    fi
+    
+    CENTMIN=0
+    CENTMAX=10
+    if [ $DO_TRUEFRACTIONS_PbPbMB_010 -eq 1 ]; then
+        sed '1iconst int nPtBins = 8; float ptbin[nPtBins+1] = {2.,4.,5.,6.,8.,10.,12.5,15.,20.};' trueFprompt.cc > trueFprompt_tmp.cc
+        g++ trueFprompt_tmp.cc $(root-config --cflags --libs) -g -o trueFprompt_tmp.exe 
+        ./trueFprompt_tmp.exe "$TCOLPbPbMB" "$INPUTMCPbPbP" "$INPUTMCPbPbNP" "$WEIGHTPbPbMB" "$CUTPbPbMB" "$OUTPUTFILES" "$CENTMIN" "$CENTMAX"
+        rm trueFprompt_tmp.exe
+        rm trueFprompt_tmp.cc
+    fi
+    
+    if [ $DO_TRUEFRACTIONS_PbPb_010 -eq 1 ]; then
         sed '1iconst int nPtBins = 5; float ptbin[nPtBins+1] = {20.,25.,30.,40.,60.,100.};' trueFprompt.cc > trueFprompt_tmp.cc
         g++ trueFprompt_tmp.cc $(root-config --cflags --libs) -g -o trueFprompt_tmp.exe 
         ./trueFprompt_tmp.exe "$TCOLPbPb" "$INPUTMCPbPbP" "$INPUTMCPbPbNP" "$WEIGHTPbPb" "$CUTPbPb" "$OUTPUTFILES" "$CENTMIN" "$CENTMAX"
@@ -90,12 +113,23 @@ if [ $DO_TRUEFRACTIONS -eq 1 ]; then
 fi
 
 if [ $DO_COMPARE -eq 1 ]; then
+
     if [ $DO_COMPARE_PP -eq 1 ]; then
         root -b -q "compare.cc+("\"PP\"","\"$OUTPUTFILES\"")"
     fi
-    if [ $DO_COMPARE_PbPb -eq 1 ]; then
+
+    CENTMIN=0
+    CENTMAX=100
+    if [ $DO_COMPARE_PbPb_0100 -eq 1 ]; then
         root -b -q "compare.cc+("\"PbPb\"","\"$OUTPUTFILES\"","$CENTMIN","$CENTMAX")"
     fi
+
+    CENTMIN=0
+    CENTMAX=10
+    if [ $DO_COMPARE_PbPb_010 -eq 1 ]; then
+        root -b -q "compare.cc+("\"PbPb\"","\"$OUTPUTFILES\"","$CENTMIN","$CENTMAX")"
+    fi
+
 fi
 
 rm uti.h

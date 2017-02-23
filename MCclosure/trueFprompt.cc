@@ -22,21 +22,7 @@ void trueFprompt(TString tPbPb, TString inputmcP, TString inputmcNP,
 
   TH1D* hcountP = new TH1D("hcountP",";D p_{T} / GeV/c;count",nPtBins,ptbin);
   TH1D* hcountNP = new TH1D("hcountNP",";D p_{T} / GeV/c;count",nPtBins,ptbin);
-  /*
-  TH1D** hMassP = new TH1D*[nPtBins];
-  TH1D** hMassNP = new TH1D*[nPtBins];
-  for(int i=0;i<nPtBins;i++)
-    {
-      hMassP[i] = new TH1D(Form("hMassP_%d",i),";m_{K#pi} / GeV/c^{2};",60,1.7,2.0);
-      hMassNP[i] = new TH1D(Form("hMassNP_%d",i),";m_{K#pi} / GeV/c^{2};",60,1.7,2.0);
-      tMCP->Project(Form("hMassP_%d",i),"Dmass",Form("(%s)*(%s&&Dpt>%f&&Dpt<%f)",weight.Data(),cutP.Data(),ptbin[i],ptbin[i+1]));
-      tMCNP->Project(Form("hMassNP_%d",i),"Dmass",Form("(%s)*(%s&&Dpt>%f&&Dpt<%f)",weight.Data(),cutNP.Data(),ptbin[i],ptbin[i+1]));
-      hcountP->SetBinContent(i+1,hMassP[i]->Integral());
-      hcountP->Sumw2();
-      hcountNP->SetBinContent(i+1,hMassNP[i]->Integral());
-      hcountNP->Sumw2();
-    }
-  */
+
   tMCP->Project("hcountP","Dpt",Form("(%s)*(%s)",weight.Data(),cutP.Data()));
   hcountP->Sumw2();
   tMCNP->Project("hcountNP","Dpt",Form("(%s)*(%s)",weight.Data(),cutNP.Data()));
@@ -59,8 +45,6 @@ void trueFprompt(TString tPbPb, TString inputmcP, TString inputmcNP,
   TFile* outf = new TFile(Form("%s%s.root",outputfile.Data(),outputname.Data()),"recreate");
   outf->cd();
   hPromptFraction->Write();
-  //for(int i=0;i<nPtBins;i++) hMassP[i]->Write();
-  //for(int i=0;i<nPtBins;i++) hMassNP[i]->Write();
   outf->Close();
 
 }

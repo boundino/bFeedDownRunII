@@ -1,8 +1,5 @@
 #include "../uti.h"
 
-Float_t centmin=0;
-Float_t centmax=100;
-
 TString inputdataPbPb = "/data/wangj/MC2015/Dntuple/PbPb/Official/ntD_EvtBase_20160513_DfinderMC_PbPb_20160502_dPt1tkPt0p5_D0_promptNnonprompt_Dpt2Dy1p1tkPt0p7tkEta2Decay2p9Dalpha0p14Skim_pthatweight.root";
 TString inputdataPbPbMB = "/data/wangj/MC2015/Dntuple/PbPb/Official/ntD_EvtBase_20160513_DfinderMC_PbPb_20160502_dPt1tkPt0p5_D0_promptNnonprompt_Dpt2Dy1p1tkPt0p7tkEta2Decay2p9Dalpha0p14Skim_pthatweight.root";
 TString inputmcpPbPb = "/data/HeavyFlavourRun2/MC2015/Dntuple/PbPb/ntD_EvtBase_20160513_DfinderMC_PbPb_20160502_dPt1tkPt0p5_D0_prompt_Dpt2Dy1p1tkPt0p7tkEta2Decay2p9Dalpha0p14Skim_pthatweight.root";
@@ -35,7 +32,7 @@ TCut cutNonPrompt ="DgenBAncestorpt>0";
 const int nBinX = 13;
 Float_t binsX[nBinX+1] = {2.,4.,5.,6.,8.,10.,12.5,15.0,20.,25.,30.,40.,60.,100};
 
-const int nBinY = 20;
+const int nBinY = 14;
 Float_t binsY[nBinY+1];
 float firstBinYWidth = 0.001;
 float binYWidthRatio = 1.27;

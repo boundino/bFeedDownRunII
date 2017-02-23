@@ -1,5 +1,5 @@
 #include "project.h"
-void projectPbPbMB(TString col)
+void projectPbPbMB(TString col, Float_t centmin, Float_t centmax)
 {
   TFile* inf = new TFile(inputdataPbPbMB);
   TTree* tData = (TTree*)inf->Get("ntDkpi");

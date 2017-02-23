@@ -1,5 +1,6 @@
 #include "project.h"
-void projectPbPbMC(TString col)
+
+void projectPbPbMC(TString col, Float_t centmin, Float_t centmax)
 {
 
   TFile* infMCP = new TFile(inputmcpPbPb);

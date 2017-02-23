@@ -1,11 +1,8 @@
 #!/bin/bash
-CENTMIN=0
-CENTMAX=10
 
-#
 DO_PROJECT=$1
 DO_FIT=$2
-COL="PbPb"
+COL="PP"
 
 ##
 
@@ -26,13 +23,13 @@ if [ $DO_PROJECT -eq 1 ]; then
     SAMPLES=("${COL}MC" "${COL}MBMC" "${COL}" "${COL}MB")
     for i in ${SAMPLES[@]}
     do
-        root -l -b -q "project${i}.C+("\"$i\"","$CENTMIN$","$CENTMAX")"
+        root -l -b -q "project${i}.C+("\"$i\"")"
     done
     cd ..
 fi
 
 if [ $DO_FIT -eq 1 ]; then
-    root -l -b -q "bFeedDownFraction.C+("\"$COL\"","$CENTMIN","$CENTMAX")"
+    root -l -b -q "bFeedDownFraction.C+("\"$COL\"")"
 fi
 
 rm bFeedDownFraction.*
