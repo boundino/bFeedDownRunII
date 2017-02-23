@@ -21,7 +21,6 @@ void fillptbins(Bool_t isPbPb)
       for(int i=0;i<(nPtBins+1);i++) ptBins[i] = ptBins_PP[i];
     }
 }
-//const int nPtBins = 14;
 
 const int nFonllBins = 400;
 Double_t fstFonllBins = 0;

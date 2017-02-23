@@ -78,12 +78,23 @@ void fitBoverD(TString output)
       Float_t apt = (ptBins[i]+ptBins[i+1])/2.;
       apts[i] = apt;
       aptse[i] = -(ptBins[i]-ptBins[i+1])/2.;
-      if(ptBins[i]<8. || ptBins[i+1]>60.)
+      if(ptBins[i]<8.)
         {
           aBD13[i] = (3+1)/2.;
           aBD13e[i] = (3-1)/2.;
           hBoverDh->SetBinContent(i+1,3);
           hBoverDl->SetBinContent(i+1,1);
+          aBDDa[i] = -1;
+          aBDDae[i] = 0;
+          hBoverDhDa->SetBinContent(i+1,-1);
+          hBoverDlDa->SetBinContent(i+1,-1);
+        }
+      else if(ptBins[i+1]>60.)
+        {
+          aBD13[i] = (2+0.2)/2.;
+          aBD13e[i] = (2-0.2)/2.;
+          hBoverDh->SetBinContent(i+1,2);
+          hBoverDl->SetBinContent(i+1,0.2);
           aBDDa[i] = -1;
           aBDDae[i] = 0;
           hBoverDhDa->SetBinContent(i+1,-1);

@@ -1,9 +1,12 @@
 #!/bin/bash
 
 CENTMIN=0
-CENTMAX=100
+CENTMAX=0
 #0:PP, 1:PbPb0100, 2:PbPb010
 COL=$1
+if [ $COL -eq 1 ]; then
+    CENTMAX=100
+fi
 if [ $COL -eq 2 ]; then
     CENTMAX=10
 fi
