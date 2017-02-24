@@ -1,56 +1,55 @@
 
-# bFeedDownRunII
+<h1> bFeedDownRunII </h1>
+<p> bFeedDownRunII is created to extract D0 prompt fractions. </p>
 
-bFeedDownRunII is created to extract D0 prompt fractions.
-
-## analysis/
-### Introduction
-analysis/ is main anaysis macros. For each collision system, there are two steps:
+<h2> analysis/ </h2>
+<h3> Introduction </h3>
+<p> analysis/ is main anaysis macros. For each collision system, there are two steps: </p>
 <ol>
-<li> `analysis/*/savehist/project*.C`: Project and save histograms </li>
-<li> `analysis/bFeedDownFraction.C`: Fit DCA distributions </li>
+<li> <code>analysis/*/savehist/project*.C</code>: Project and save histograms </li>
+<li> <code>analysis/bFeedDownFraction.C</code>: Fit DCA distributions </li>
 </ol>
-### How to run
+<h3> How to run </h3>
 <ul>
-<li> Run all three collision systems (PP,PbPbcent0100,PbPbcent010)
-```
-cd analysis/
+<li> Run all three collision systems (PP,PbPbcent0100,PbPbcent010) <br />
+<code>
+cd analysis/ <br />
 source doall.sh 1 1
-```
-where the arguments decide whether to run each step.
+</code> <br />
+<p> where the arguments decide whether to run each step. </p>
 </li>
-<li> Run one collision system (e.g. PP)
-```
-cd analysis/PP/
+<li> Run one collision system (e.g. PP) <br />
+<code>
+cd analysis/PP/ <br />
 source dobFeedDown.sh 1 1
-```
-where the arguments decide whether to run each step.
+</code> <br />
+<p> where the arguments decide whether to run each step. </p> 
 </li>
 </ul>
 
-## pfFONLL/
-### Introduction
-pfFONLL/ calculates and plots prompt fractions by FONLL. There are three steps:
+<h2> pfFONLL/ </h2>
+<h3> Introduction </h3>
+<p> pfFONLL/ calculates and plots prompt fractions by FONLL. There are three steps: </p>
 <ol>
-<li> `pfFONLL/fonllDsigmadpt.C`: Calculate FONLL pp cross-sections </li>
-<li> `MCefficiency.C``plotPnNP.C`: Calculate and MC efficiency </li>
-<li> `fitBoverD.C``bFeedDownFONLL.C``plotFractions.C`: Set BRAA/DRAA ratios, calculate and plot prompt fractions </li>
+<li> <code>pfFONLL/fonllDsigmadpt.C</code>: Calculate FONLL pp cross-sections </li>
+<li> <code>MCefficiency.C</code><code>plotPnNP.C</code>: Calculate and MC efficiency </li>
+<li> <code>fitBoverD.C</code><code>bFeedDownFONLL.C</code><code>plotFractions.C</code>: Set BRAA/DRAA ratios, calculate and plot prompt fractions </li>
 </ol>
-### How to run it
+<h3> How to run it </h3>
 <ul>
-<li> Run all three collision systems
-```
-cd pfFONLL/
+<li> Run all three collision systems <br />
+<code>
+cd pfFONLL/ <br />
 source doall.sh 1 1 1
-```
-where the arguments decide whether to run each step.
+</code> <br />
+<p> where the arguments decide whether to run each step. </p>
 </li>
-<li> Run one collision system
-```
-cd pfFONLL/
+<li> Run one collision system <br />
+<code>
+cd pfFONLL/ <br />
 source dobFeedDownFONLL.sh [c] 1 1 1
-```
-`[c]` decides the system (0:PP, 1:PbPbcent0100, 2:PbPbcent010), and the others decide whether to run each step.
+</code> <br />
+<p> where <code>[c]</code> decides the system (0:PP, 1:PbPbcent0100, 2:PbPbcent010), and the others decide whether to run each step. </p>
 </li>
 </ul>
 
@@ -58,23 +57,23 @@ source dobFeedDownFONLL.sh [c] 1 1 1
 ### Introduction
 finalPlots/ plots the final plots comparing prompt fractions by DCA fitting and FONLL. There is one step:
 <ol>
-<li> `finalPlots.C` </li>
+<li> <code>finalPlots.C</code> </li>
 </ol>
-It prerequires the results from `analysis/` and `pfFONLL/`. 
+It prerequires the results from <code>analysis/</code> and <code>pfFONLL/</code>. 
 ### How to run it
 <ul>
 <li> Run all three collision systems 
-```
+<code>
 cd finalPlots/
 source doall.sh
-```
+</code>
 </li>
 <li> Run one collision system
-```
+<code>
 cd finalPlots/
 source dofinalPlots.sh [c]
-```
-`[c]` decides the system (0:PP, 1:PbPbcent0100, 2:PbPbcent010).
+</code>
+<code>[c]</code> decides the system (0:PP, 1:PbPbcent0100, 2:PbPbcent010).
 </li>
 </ul>
 
@@ -82,15 +81,15 @@ source dofinalPlots.sh [c]
 ### Introduction
 MCclosure/ tests closure of the machinery. There are three steps:
 <ol>
-<li> `analysis/*`: Calculate the prompt fractions from DCA fitting machinery </li>
-<li> `trueFprompt.cc`: Count the true prompt fractions from fake data </li>
-<li> `compare.cc`:  Plot the comparison of prompt fractions from DCA fitting and true values </li>
+<li> <code>analysis/*</code>: Calculate the prompt fractions from DCA fitting machinery </li>
+<li> <code>trueFprompt.cc</code>: Count the true prompt fractions from fake data </li>
+<li> <code>compare.cc</code>:  Plot the comparison of prompt fractions from DCA fitting and true values </li>
 </ol>
 ### How to run it
-```
+<code>
 cd MCclosure/analysis/
 source doall.sh 1 1
 cd ..
 source doMCclosure.sh 1 1
-```
+</code>
 
