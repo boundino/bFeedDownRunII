@@ -6,8 +6,11 @@ bFeedDownRunII is created to extract D0 prompt fractions.
 ## analysis/
 ### Introduction
 analysis/ is main anaysis macros. For each collision system, there are two steps:
-1. `analysis/*/savehist/project*.C`: Project and save histograms
-2. `analysis/bFeedDownFraction.C`: Fit DCA distributions
+<ol>
+<li> `analysis/*/savehist/project*.C`: Project and save histograms </li>
+<li> `analysis/bFeedDownFraction.C`: Fit DCA distributions </li>
+</ol>
+
 ### How to run
 * Run all three collision systems (PP,PbPbcent0100,PbPbcent010)
 ```
@@ -26,7 +29,9 @@ where the arguments decide whether to run each step.
 ### Introduction
 pfFONLL/ calculates and plots prompt fractions by FONLL. There are three steps:
 1. `pfFONLL/fonllDsigmadpt.C`: Calculate FONLL pp cross-sections
+
 2. `MCefficiency.C``plotPnNP.C`: Calculate and MC efficiency
+
 3. `fitBoverD.C``bFeedDownFONLL.C``plotFractions.C`: Set BRAA/DRAA ratios, calculate and plot prompt fractions
 ### How to run it
 * Run all three collision systems
