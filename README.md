@@ -12,17 +12,17 @@
 <h3> How to run </h3>
 <ul>
 <li> Run all three collision systems (PP,PbPbcent0100,PbPbcent010) <br />
-<code>
-cd analysis/ <br />
+<pre>
+cd analysis/ 
 source doall.sh 1 1
-</code> <br />
+</pre> <br />
 <p> where the arguments decide whether to run each step. </p>
 </li>
 <li> Run one collision system (e.g. PP) <br />
-<code>
-cd analysis/PP/ <br />
+<pre>
+cd analysis/PP/
 source dobFeedDown.sh 1 1
-</code> <br />
+</pre> <br />
 <p> where the arguments decide whether to run each step. </p> 
 </li>
 </ul>
@@ -38,58 +38,58 @@ source dobFeedDown.sh 1 1
 <h3> How to run it </h3>
 <ul>
 <li> Run all three collision systems <br />
-<code>
-cd pfFONLL/ <br />
+<pre>
+cd pfFONLL/
 source doall.sh 1 1 1
-</code> <br />
+</pre> <br />
 <p> where the arguments decide whether to run each step. </p>
 </li>
 <li> Run one collision system <br />
-<code>
+<pre>
 cd pfFONLL/ <br />
 source dobFeedDownFONLL.sh [c] 1 1 1
-</code> <br />
+</pre> <br />
 <p> where <code>[c]</code> decides the system (0:PP, 1:PbPbcent0100, 2:PbPbcent010), and the others decide whether to run each step. </p>
 </li>
 </ul>
 
-## finalPlots/
-### Introduction
-finalPlots/ plots the final plots comparing prompt fractions by DCA fitting and FONLL. There is one step:
+<h2> finalPlots/ </h2>
+<h3> Introduction </h3>
+<p> finalPlots/ plots the final plots comparing prompt fractions by DCA fitting and FONLL. There is one step: </p>
 <ol>
 <li> <code>finalPlots.C</code> </li>
 </ol>
-It prerequires the results from <code>analysis/</code> and <code>pfFONLL/</code>. 
-### How to run it
+<p> It prerequires the results from <code>analysis/</code> and <code>pfFONLL/</code>. </p>
+<h3> How to run it </h3>
 <ul>
-<li> Run all three collision systems 
-<code>
+<li> Run all three collision systems <br />
+<pre>
 cd finalPlots/
 source doall.sh
-</code>
+</pre>
 </li>
-<li> Run one collision system
-<code>
+<li> Run one collision system <br />
+<pre>
 cd finalPlots/
 source dofinalPlots.sh [c]
-</code>
-<code>[c]</code> decides the system (0:PP, 1:PbPbcent0100, 2:PbPbcent010).
+</pre>
+<p> where <code>[c]</code> decides the system (0:PP, 1:PbPbcent0100, 2:PbPbcent010). </p>
 </li>
 </ul>
 
-## MCclosure/
-### Introduction
-MCclosure/ tests closure of the machinery. There are three steps:
+<h2> MCclosure/ </h2>
+<h3> Introduction </h3>
+<p> MCclosure/ tests closure of the machinery. There are three steps: </p>
 <ol>
 <li> <code>analysis/*</code>: Calculate the prompt fractions from DCA fitting machinery </li>
 <li> <code>trueFprompt.cc</code>: Count the true prompt fractions from fake data </li>
 <li> <code>compare.cc</code>:  Plot the comparison of prompt fractions from DCA fitting and true values </li>
 </ol>
-### How to run it
-<code>
+<h3> How to run it </h3>
+<pre>
 cd MCclosure/analysis/
 source doall.sh 1 1
 cd ..
 source doMCclosure.sh 1 1
-</code>
+</pre>
 
