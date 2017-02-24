@@ -15,14 +15,14 @@
 <pre>
 cd analysis/ 
 source doall.sh 1 1
-</pre> <br />
+</pre>
 <p> where the arguments decide whether to run each step. </p>
 </li>
 <li> Run one collision system (e.g. PP) <br />
 <pre>
 cd analysis/PP/
 source dobFeedDown.sh 1 1
-</pre> <br />
+</pre>
 <p> where the arguments decide whether to run each step. </p> 
 </li>
 </ul>
@@ -41,14 +41,14 @@ source dobFeedDown.sh 1 1
 <pre>
 cd pfFONLL/
 source doall.sh 1 1 1
-</pre> <br />
+</pre>
 <p> where the arguments decide whether to run each step. </p>
 </li>
 <li> Run one collision system <br />
 <pre>
 cd pfFONLL/ <br />
 source dobFeedDownFONLL.sh [c] 1 1 1
-</pre> <br />
+</pre>
 <p> where <code>[c]</code> decides the system (0:PP, 1:PbPbcent0100, 2:PbPbcent010), and the others decide whether to run each step. </p>
 </li>
 </ul>
