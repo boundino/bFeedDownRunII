@@ -20,6 +20,7 @@ done
 #
 cp ../../uti.h .
 cp ../bFeedDownFraction.* .
+cp ../rebin.C .
 
 if [ $DO_PROJECT -eq 1 ]; then
     cd savehist/
@@ -33,7 +34,10 @@ fi
 
 if [ $DO_FIT -eq 1 ]; then
     root -l -b -q "bFeedDownFraction.C+("\"$COL\"","$CENTMIN","$CENTMAX")"
+    root -l -b -q "rebin.C+("\"$COL\"")"
+    mv rootfiles/bFeedDownResult_temp.root rootfiles/bFeedDownResult.root
 fi
 
+rm rebin.C
 rm bFeedDownFraction.*
 rm uti.h

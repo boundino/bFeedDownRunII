@@ -32,24 +32,39 @@ void finalPlots(TString coly, TString outputFraction, Float_t centmin=0, Float_t
   grFraction->SetLineWidth(1.);
   grFraction->SetMarkerSize(0.8);
   grFraction->SetMarkerStyle(20);
-  grFraction->SetLineColor(kRed-7);
-  grFraction->SetMarkerColor(kRed-7);
+  grFraction->SetLineColor(kRed);
+  grFraction->SetMarkerColor(kRed);
   TGraphAsymmErrors* grFraction3 = (TGraphAsymmErrors*)inputFONLL->Get("grPromptFraction3");
   TGraphAsymmErrors* grFractionDa = (TGraphAsymmErrors*)inputFONLL->Get("grPromptFractionDa");
   TGraphAsymmErrors* grFraction3Da = (TGraphAsymmErrors*)inputFONLL->Get("grPromptFraction3Da");
+  TGraphAsymmErrors* grFractionNPJ = (TGraphAsymmErrors*)inputFONLL->Get("grPromptFractionNPJ");
+  TGraphAsymmErrors* grFraction3NPJ = (TGraphAsymmErrors*)inputFONLL->Get("grPromptFraction3NPJ");
 
   TGraphAsymmErrors* grFractionRatio = (TGraphAsymmErrors*)inputFONLL->Get("grPromptFraction");
   grFractionRatio->SetLineWidth(1.);
   grFractionRatio->SetMarkerSize(0.8);
   grFractionRatio->SetMarkerStyle(20);
-  grFractionRatio->SetLineColor(kRed-7);
-  grFractionRatio->SetMarkerColor(kRed-7);
-  TGraphAsymmErrors* grFractionRatio3 = (TGraphAsymmErrors*)inputFONLL->Get("grPromptFractionDa");
+  grFractionRatio->SetLineColor(kRed);
+  grFractionRatio->SetMarkerColor(kRed);
+  TGraphAsymmErrors* grFractionRatio3 = (TGraphAsymmErrors*)inputFONLL->Get("grPromptFraction3");
   TGraphAsymmErrors* grFractionRatio3Da = (TGraphAsymmErrors*)inputFONLL->Get("grPromptFraction3Da");
+  TGraphAsymmErrors* grFractionRatio3NPJ = (TGraphAsymmErrors*)inputFONLL->Get("grPromptFraction3NPJ");
+
+  TH1F* hBoverDh = (TH1F*)inputFONLL->Get("hBoverDh");
+  TH1F* hBoverDl = (TH1F*)inputFONLL->Get("hBoverDl");
+  TH1F* hBoverDhDa = (TH1F*)inputFONLL->Get("hBoverDhDa");
+  TH1F* hBoverDlDa = (TH1F*)inputFONLL->Get("hBoverDlDa");
+  TH1F* hBoverDhNPJ = (TH1F*)inputFONLL->Get("hBoverDhNPJ");
+  TH1F* hBoverDlNPJ = (TH1F*)inputFONLL->Get("hBoverDlNPJ");
+  TGraphAsymmErrors* grBoverD3 = (TGraphAsymmErrors*)inputFONLL->Get("grPromptFraction3");
+  TGraphAsymmErrors* grBoverD3Da = (TGraphAsymmErrors*)inputFONLL->Get("grPromptFraction3Da");
+  TGraphAsymmErrors* grBoverD3NPJ = (TGraphAsymmErrors*)inputFONLL->Get("grPromptFraction3NPJ");
+
   for(int i=0;i<grFraction->GetN();i++)
     {
       Double_t pt,fracDCA;
       grFractionDCA->GetPoint(i,pt,fracDCA);
+      grFractionDCA->SetPointError(i,0,grFractionDCA->GetErrorY(i));
 
       Double_t frac,frac3;
       grFraction->GetPoint(i,pt,frac);
@@ -66,6 +81,11 @@ void finalPlots(TString coly, TString outputFraction, Float_t centmin=0, Float_t
       grFractionRatio3->SetPoint(i,pt,rcenter);
       grFractionRatio3->SetPointEYlow(i,rerror);
       grFractionRatio3->SetPointEYhigh(i,rerror);
+      Double_t BoverDcenter = (hBoverDh->GetBinContent(i+1)+hBoverDl->GetBinContent(i+1))/2.;
+      Double_t BoverDerror = (hBoverDh->GetBinContent(i+1)-hBoverDl->GetBinContent(i+1))/2.;
+      grBoverD3->SetPoint(i,pt,BoverDcenter);
+      grBoverD3->SetPointEYlow(i,BoverDerror);
+      grBoverD3->SetPointEYhigh(i,BoverDerror);
 
       grFractionRatio->SetPoint(i,pt,fracDCA/frac);
       grFractionRatio->SetPointEYlow(i,0);
@@ -86,22 +106,66 @@ void finalPlots(TString coly, TString outputFraction, Float_t centmin=0, Float_t
       grFractionRatio3Da->SetPoint(i,pt,rcenterDa);
       grFractionRatio3Da->SetPointEYlow(i,rerrorDa);
       grFractionRatio3Da->SetPointEYhigh(i,rerrorDa);
+      Double_t BoverDcenterDa = (hBoverDhDa->GetBinContent(i+1)+hBoverDlDa->GetBinContent(i+1))/2.;
+      Double_t BoverDerrorDa = (hBoverDhDa->GetBinContent(i+1)-hBoverDlDa->GetBinContent(i+1))/2.;
+      grBoverD3Da->SetPoint(i,pt,BoverDcenterDa);
+      grBoverD3Da->SetPointEYlow(i,BoverDerrorDa);
+      grBoverD3Da->SetPointEYhigh(i,BoverDerrorDa);
+
+      Double_t fracNPJ,frac3NPJ;
+      grFractionNPJ->GetPoint(i,pt,fracNPJ);
+      grFraction3NPJ->GetPoint(i,pt,frac3NPJ);
+      Double_t fcenterNPJ = (fracNPJ+frac3NPJ)/2.;
+      Double_t ferrorNPJ = (fracNPJ-frac3NPJ)/2.;
+      grFraction3NPJ->SetPoint(i,pt,fcenterNPJ);
+      grFraction3NPJ->SetPointEYlow(i,ferrorNPJ);
+      grFraction3NPJ->SetPointEYhigh(i,ferrorNPJ);
+      Double_t rhNPJ = fracDCA/fracNPJ;
+      Double_t rlNPJ = fracDCA/frac3NPJ;
+      Double_t rcenterNPJ = (rhNPJ+rlNPJ)/2.;
+      Double_t rerrorNPJ = (rhNPJ-rlNPJ)/2.;
+      grFractionRatio3NPJ->SetPoint(i,pt,rcenterNPJ);
+      grFractionRatio3NPJ->SetPointEYlow(i,rerrorNPJ);
+      grFractionRatio3NPJ->SetPointEYhigh(i,rerrorNPJ);
+      Double_t BoverDcenterNPJ = (hBoverDhNPJ->GetBinContent(i+1)+hBoverDlNPJ->GetBinContent(i+1))/2.;
+      Double_t BoverDerrorNPJ = (hBoverDhNPJ->GetBinContent(i+1)-hBoverDlNPJ->GetBinContent(i+1))/2.;
+      grBoverD3NPJ->SetPoint(i,pt,BoverDcenterNPJ);
+      grBoverD3NPJ->SetPointEYlow(i,BoverDerrorNPJ);
+      grBoverD3NPJ->SetPointEYhigh(i,BoverDerrorNPJ);
+
     }
-  grFraction3->SetLineColor(kRed-7);
-  grFraction3->SetFillColor(kRed-7);
+
   grFraction3->SetFillStyle(1001);
+  grFraction3->SetLineColor(kRed-9);
+  grFraction3->SetFillColor(kRed-9);
+  grFraction3Da->SetFillStyle(1001);
   grFraction3Da->SetLineColor(kAzure-9);
   grFraction3Da->SetFillColor(kAzure-9);
-  grFraction3Da->SetFillStyle(1001);
+  grFraction3NPJ->SetFillStyle(1001);
+  grFraction3NPJ->SetLineColor(kViolet+6);
+  grFraction3NPJ->SetFillColorAlpha(kViolet+6,0.4);
 
-  grFractionRatio3->SetLineColor(kRed-7);
-  grFractionRatio3->SetFillColor(kRed-7);
   grFractionRatio3->SetFillStyle(1001);
+  grFractionRatio3->SetLineColor(kRed-9);
+  grFractionRatio3->SetFillColor(kRed-9);
+  grFractionRatio3Da->SetFillStyle(1001);
   grFractionRatio3Da->SetLineColor(kAzure-9);
   grFractionRatio3Da->SetFillColor(kAzure-9);
-  grFractionRatio3Da->SetFillStyle(1001);
+  grFractionRatio3NPJ->SetFillStyle(1001);
+  grFractionRatio3NPJ->SetLineColor(kViolet+6);
+  grFractionRatio3NPJ->SetFillColorAlpha(kViolet+6,0.4);
 
-  TH2F* hempty = new TH2F("hempty","",20,0.,102.,10.,0.,1.);
+  grBoverD3->SetFillStyle(1001);
+  grBoverD3->SetLineColor(kRed-9);
+  grBoverD3->SetFillColor(kRed-9);
+  grBoverD3Da->SetFillStyle(1001);
+  grBoverD3Da->SetLineColor(kAzure-9);
+  grBoverD3Da->SetFillColor(kAzure-9);
+  grBoverD3NPJ->SetFillStyle(1001);
+  grBoverD3NPJ->SetLineColor(kViolet+6);
+  grBoverD3NPJ->SetFillColorAlpha(kViolet+6,0.4);
+
+  TH2F* hempty = new TH2F("hempty","",20,1.,200.,10.,0.,1.1);
   hempty->GetXaxis()->SetTitle("D^{0} p_{T} (GeV/c)");
   hempty->GetYaxis()->SetTitle("Prompt fraction");
   hempty->GetXaxis()->CenterTitle();
@@ -117,7 +181,7 @@ void finalPlots(TString coly, TString outputFraction, Float_t centmin=0, Float_t
   hempty->GetXaxis()->SetLabelSize(0.04);
   hempty->GetYaxis()->SetLabelSize(0.04);
 
-  TH2F* hempty2 = new TH2F("hempty2","",20,0.,102.,5.,0.4,1.6);
+  TH2F* hempty2 = new TH2F("hempty2","",20,1.,200.,5.,0.4,1.6);
   hempty2->GetXaxis()->SetTitle("D^{0} p_{T} (GeV/c)");
   hempty2->GetYaxis()->SetTitle("Fit / FONLL");
   hempty2->GetXaxis()->SetNdivisions(515);
@@ -135,8 +199,27 @@ void finalPlots(TString coly, TString outputFraction, Float_t centmin=0, Float_t
   hempty2->GetXaxis()->SetLabelSize(0.088);
   hempty2->GetYaxis()->SetLabelSize(0.088);
 
+  TH2F* hempty3 = new TH2F("hempty3","",20,1.,200.,5.,0.,3.5);
+  hempty3->GetXaxis()->SetTitle("D^{0} p_{T} (GeV/c)");
+  hempty3->GetYaxis()->SetTitle("B R_{AA} / D R_{AA}");
+  hempty3->GetXaxis()->SetNdivisions(515);
+  hempty3->GetYaxis()->SetNdivisions(505);
+  hempty3->GetXaxis()->CenterTitle();
+  hempty3->GetYaxis()->CenterTitle();
+  hempty3->GetXaxis()->SetTitleOffset(1.0);
+  hempty3->GetYaxis()->SetTitleOffset(0.5);
+  hempty3->GetXaxis()->SetTitleSize(0.10);
+  hempty3->GetYaxis()->SetTitleSize(0.10);
+  hempty3->GetXaxis()->SetTitleFont(42);
+  hempty3->GetYaxis()->SetTitleFont(42);
+  hempty3->GetXaxis()->SetLabelFont(42);
+  hempty3->GetYaxis()->SetLabelFont(42);
+  hempty3->GetXaxis()->SetLabelSize(0.088);
+  hempty3->GetYaxis()->SetLabelSize(0.088);
+
   TCanvas* c2 = new TCanvas("c2","",600,800);
   TPad* pad1 = new TPad("pad1","",0,0.30,1,1);
+  pad1->SetLogx();
   pad1->SetBottomMargin(0);
   pad1->SetRightMargin(0.043);
   pad1->SetLeftMargin(0.12);
@@ -147,6 +230,7 @@ void finalPlots(TString coly, TString outputFraction, Float_t centmin=0, Float_t
   if(isPbPb) grFraction3->Draw("same2");
   else grFraction->Draw("samepe");
   if(isPbPb) grFraction3Da->Draw("same2");
+  if(isPbPb) grFraction3NPJ->Draw("same5");
   grFractionDCA->Draw("samepe");
   TLatex* texCms = new TLatex(0.12,0.93, "#scale[1.25]{CMS} Preliminary");
   texCms->SetNDC();
@@ -171,20 +255,22 @@ void finalPlots(TString coly, TString outputFraction, Float_t centmin=0, Float_t
     }
   else
     {
-      leg = new TLegend(0.30,0.15,0.75,0.33);
+      leg = new TLegend(0.24,0.09,0.75,0.33);
       setleg(leg);
       leg->AddEntry(grFractionDCA,"Fit DCA","pl");
       leg->AddEntry(grFraction3Da,"FONLL (B R_{AA} / D R_{AA} from data)","f");
-      leg->AddEntry(grFraction3,"FONLL (B R_{AA} / D R_{AA} varies 1~3)","f");
+      leg->AddEntry(grFraction3,"FONLL (B R_{AA} / D R_{AA} varies 0.2~2(3))","f");
+      leg->AddEntry(grFraction3NPJ,"FONLL (J/#psi R_{AA} / D R_{AA} from data)","f");
     }
   leg->Draw();
   TString per = "%";
-  TLatex* centtex = new TLatex(0.32,0.36,Form("Cent. %.0f-%.0f%s",centmin,centmax,per.Data()));
+  TLatex* centtex = new TLatex(0.26,0.36,Form("Cent. %.0f-%.0f%s",centmin,centmax,per.Data()));
   settex(centtex);
   if(isPbPb) centtex->Draw();
   c2->cd();
 
   TPad* pad2 = new TPad("pad2","",0,0,1,0.30);
+  pad2->SetLogx();
   pad2->SetTopMargin(0);
   pad2->SetRightMargin(0.043);
   pad2->SetLeftMargin(0.12);
@@ -195,7 +281,8 @@ void finalPlots(TString coly, TString outputFraction, Float_t centmin=0, Float_t
   if(isPbPb) grFractionRatio3->Draw("same2");
   else grFractionRatio->Draw("samepe");
   if(isPbPb) grFractionRatio3Da->Draw("same2");
-  TLine* l = new TLine(0,1,102,1);
+  if(isPbPb) grFractionRatio3NPJ->Draw("same5");
+  TLine* l = new TLine(1,1,200,1);
   l->SetLineStyle(2);
   l->SetLineColor(kBlack);
   l->SetLineWidth(2);
@@ -205,26 +292,64 @@ void finalPlots(TString coly, TString outputFraction, Float_t centmin=0, Float_t
   c2->SaveAs(Form("plots/cfpromptComparison_%s.pdf",tcoly.Data()));
   c2->SaveAs(Form("plots/cfpromptComparison_%s.png",tcoly.Data()));
 
-  /*
-  TCanvas* c = new TCanvas("c","",600,600);
-  hempty->Draw();
-  if(isPbPb) grFraction3->Draw("same2");
-  else grFraction->Draw("samepe");
-  if(isPbPb) grFraction3Da->Draw("same2");
-  grFractionDCA->Draw("samepe");
-  drawCMS(coly);
-  TLegend* leg = new TLegend(0.60,0.30,0.90,0.42);
-  setleg(leg);
-  leg->AddEntry(grFractionDCA,"Fit DCA","pl");
-  if(isPbPb) leg->AddEntry(grFraction3,"FONLL + MC eff","f");
-  else leg->AddEntry(grFraction,"FONLL + MC eff","pl");
-  leg->Draw();
-  TString per = "%";
-  TLatex* centtex = new TLatex(0.62,0.45,Form("Cent. %.0f-%.0f%s",centmin,centmax,per.Data()));
-  settex(centtex);
-  if(isPbPb) centtex->Draw();
-  c->SaveAs(Form("plots/cfprompt_%s.pdf",tcoly.Data()));
-  */
+  if(isPbPb)
+    {
+      TCanvas* c3 = new TCanvas("c3","",600,1040);
+      TPad* pad31 = new TPad("pad31","",0,0.46154,1,1);
+      pad31->SetLogx();
+      pad31->SetBottomMargin(0);
+      pad31->SetRightMargin(0.043);
+      pad31->SetLeftMargin(0.12);
+      pad31->SetTopMargin(0.1);
+      pad31->Draw();
+      pad31->cd();
+      hempty->Draw();
+      if(isPbPb) grFraction3->Draw("same2");
+      else grFraction->Draw("samepe");
+      if(isPbPb) grFraction3Da->Draw("same2");
+      if(isPbPb) grFraction3NPJ->Draw("same5");
+      grFractionDCA->Draw("samepe");
+      texCms->Draw();
+      texCol->Draw();
+      leg->Draw();
+      if(isPbPb) centtex->Draw();
+      c3->cd();
+      
+      TPad* pad32 = new TPad("pad32","",0,0.23077,1,0.46154);
+      pad32->SetLogx();
+      pad32->SetTopMargin(0);
+      pad32->SetRightMargin(0.043);
+      pad32->SetLeftMargin(0.12);
+      pad32->SetBottomMargin(0);
+      pad32->Draw();
+      pad32->cd();
+      hempty2->Draw();
+      if(isPbPb) grFractionRatio3->Draw("same2");
+      else grFractionRatio->Draw("samepe");
+      if(isPbPb) grFractionRatio3Da->Draw("same2");
+      if(isPbPb) grFractionRatio3NPJ->Draw("same5");
+      l->Draw();
+      c3->cd();
+
+      TPad* pad33 = new TPad("pad33","",0,0,1,0.23077);
+      pad33->SetLogx();
+      pad33->SetTopMargin(0);
+      pad33->SetRightMargin(0.043);
+      pad33->SetLeftMargin(0.12);
+      pad33->SetBottomMargin(0.25);
+      pad33->Draw();
+      pad33->cd();
+      hempty3->Draw();
+      grBoverD3->Draw("same2");
+      grBoverD3Da->Draw("same2");
+      grBoverD3NPJ->Draw("same5");
+      l->Draw();
+      c3->cd();      
+      
+      c3->SaveAs(Form("plots/cfpromptComparisonFull_%s.pdf",tcoly.Data()));
+      c3->SaveAs(Form("plots/cfpromptComparisonFull_%s.png",tcoly.Data()));
+      
+    }
 }
 
 int main(int argc, char* argv[])

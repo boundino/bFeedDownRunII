@@ -58,12 +58,10 @@ void fitBoverD(TString output)
       heNPJRAAs[i] = -NPJRAAs[i]+heNPJRAAs[i];      
     }
   TGraphAsymmErrors* grNPJRAA = new TGraphAsymmErrors(nPtBinsNPJ,ptNPJ,NPJRAAs,eptNPJ,eptNPJ,leNPJRAAs,heNPJRAAs);  
-  grNPJRAA->SetFillStyle(3005);
-  grNPJRAA->SetFillColor(kViolet+6);
-  //grNPJRAA->SetFillStyle(1001);
-  //grNPJRAA->SetFillColorAlpha(kViolet+6,0.5);
-  grNPJRAA->SetLineWidth(1);
-  grNPJRAA->SetLineColor(kViolet+2);
+  grNPJRAA->SetFillStyle(1001);
+  grNPJRAA->SetFillColorAlpha(kViolet+6,0.4);
+  grNPJRAA->SetLineWidth(0);
+  grNPJRAA->SetLineColor(kViolet+6);
 
   //
 
@@ -77,7 +75,7 @@ void fitBoverD(TString output)
 
   hempty->Draw();
   grBRAA->Draw("2same");
-  grNPJRAA->Draw("5same");
+  grNPJRAA->Draw("2same");
   grDRAA->Draw("pesame");
   TF1* fDRAA = new TF1("fDRAA","[0]+[1]*log(x)+[2]*log(x)*log(x)+[3]*log(x)*log(x)*log(x)",2,60);
   fDRAA->SetLineColor(kRed);
@@ -92,7 +90,7 @@ void fitBoverD(TString output)
   drawCMS("PbPb");
 
   cBoverD->cd(2);
-  //gPad->SetLogx();
+  gPad->SetLogx();
   TH1F* hBoverDh = new TH1F("hBoverDh","",nPtBins,ptBins);
   hBoverDh->SetLineColor(kBlack);
   TH1F* hBoverDl = new TH1F("hBoverDl","",nPtBins,ptBins);
@@ -115,9 +113,6 @@ void fitBoverD(TString output)
         {
           aBD13[i] = (3+0.2)/2.;
           aBD13e[i] = (3-0.2)/2.;
-          hBoverDh->SetBinContent(i+1,3);
-          hBoverDl->SetBinContent(i+1,0.2);
-          //
           aBDDa[i] = -1;
           aBDDae[i] = 0;
           hBoverDhDa->SetBinContent(i+1,-1);
@@ -126,14 +121,14 @@ void fitBoverD(TString output)
           aBDNPJe[i] = 0;
           hBoverDhNPJ->SetBinContent(i+1,-1);
           hBoverDlNPJ->SetBinContent(i+1,-1);          
+          //
+          hBoverDh->SetBinContent(i+1,3);
+          hBoverDl->SetBinContent(i+1,0.2);
         }
       else if(ptBins[i]>=3. && ptBins[i]<8.)
         {
           aBD13[i] = (3+0.2)/2.;
           aBD13e[i] = (3-0.2)/2.;
-          hBoverDh->SetBinContent(i+1,3);
-          hBoverDl->SetBinContent(i+1,0.2);
-          //
           aBDDa[i] = -1;
           aBDDae[i] = 0;
           hBoverDhDa->SetBinContent(i+1,-1);
@@ -152,6 +147,9 @@ void fitBoverD(TString output)
           aBDNPJe[i] = (hNPJRAAh->GetBinContent(k+1)/fDRAA->Eval(apt)-hNPJRAAl->GetBinContent(k+1)/fDRAA->Eval(apt))/2.;
           hBoverDhNPJ->SetBinContent(i+1,hNPJRAAh->GetBinContent(k+1)/fDRAA->Eval(apt));
           hBoverDlNPJ->SetBinContent(i+1,hNPJRAAl->GetBinContent(k+1)/fDRAA->Eval(apt));
+          //
+          hBoverDh->SetBinContent(i+1,3);
+          hBoverDl->SetBinContent(i+1,0.2);
         }
       else if(ptBins[i]>=8. && ptBins[i]<30.)
         {
@@ -167,9 +165,6 @@ void fitBoverD(TString output)
               cout<<"  Error: Over B RAA range."<<endl;
               continue;
             }
-          hBoverDh->SetBinContent(i+1,hBRAAh->GetBinContent(j+1)/fDRAA->Eval(apt));
-          hBoverDl->SetBinContent(i+1,hBRAAl->GetBinContent(j+1)/fDRAA->Eval(apt));
-          //
           aBDDa[i] = (hBRAAh->GetBinContent(j+1)/fDRAA->Eval(apt)+hBRAAl->GetBinContent(j+1)/fDRAA->Eval(apt))/2.;
           aBDDae[i] = (hBRAAh->GetBinContent(j+1)/fDRAA->Eval(apt)-hBRAAl->GetBinContent(j+1)/fDRAA->Eval(apt))/2.;
           hBoverDhDa->SetBinContent(i+1,hBRAAh->GetBinContent(j+1)/fDRAA->Eval(apt));
@@ -188,6 +183,9 @@ void fitBoverD(TString output)
           aBDNPJe[i] = (hNPJRAAh->GetBinContent(k+1)/fDRAA->Eval(apt)-hNPJRAAl->GetBinContent(k+1)/fDRAA->Eval(apt))/2.;
           hBoverDhNPJ->SetBinContent(i+1,hNPJRAAh->GetBinContent(k+1)/fDRAA->Eval(apt));
           hBoverDlNPJ->SetBinContent(i+1,hNPJRAAl->GetBinContent(k+1)/fDRAA->Eval(apt));
+          //
+          hBoverDh->SetBinContent(i+1,hBRAAh->GetBinContent(j+1)/fDRAA->Eval(apt));
+          hBoverDl->SetBinContent(i+1,hBRAAl->GetBinContent(j+1)/fDRAA->Eval(apt));
         }
       else if(ptBins[i]>=30. && ptBins[i]<60.)
         {
@@ -219,8 +217,6 @@ void fitBoverD(TString output)
         {
           aBD13[i] = (2+0.2)/2.;
           aBD13e[i] = (2-0.2)/2.;
-          hBoverDh->SetBinContent(i+1,2);
-          hBoverDl->SetBinContent(i+1,0.2);
           aBDDa[i] = -1;
           aBDDae[i] = 0;
           hBoverDhDa->SetBinContent(i+1,-1);
@@ -229,13 +225,16 @@ void fitBoverD(TString output)
           aBDNPJe[i] = 0;
           hBoverDhNPJ->SetBinContent(i+1,-1);
           hBoverDlNPJ->SetBinContent(i+1,-1);
+          //
+          hBoverDh->SetBinContent(i+1,2);
+          hBoverDl->SetBinContent(i+1,0.2);
         }
     }
   TGraphErrors* grBD13 = new TGraphErrors(nPtBins,apts,aBD13,aptse,aBD13e);
   grBD13->SetName("grBD13");
   grBD13->SetFillStyle(1001);
-  grBD13->SetFillColor(kRed-7);
-  grBD13->SetLineColor(kRed-7);
+  grBD13->SetFillColor(kRed-9);
+  grBD13->SetLineColor(kRed-9);
   TGraphErrors* grBDDa = new TGraphErrors(nPtBins,apts,aBDDa,aptse,aBDDae);
   grBDDa->SetName("grBDDa");
   grBDDa->SetFillStyle(1001);
@@ -243,12 +242,12 @@ void fitBoverD(TString output)
   grBDDa->SetLineColor(kAzure-9);
   TGraphErrors* grBDNPJ = new TGraphErrors(nPtBins,apts,aBDNPJ,aptse,aBDNPJe);
   grBDNPJ->SetName("grBDNPJ");
-  grBDNPJ->SetFillStyle(3005);
-  grBDNPJ->SetFillColor(kViolet+6);
+  grBDNPJ->SetFillStyle(1001);
+  grBDNPJ->SetFillColorAlpha(kViolet+6,0.4);
   grBDNPJ->SetLineWidth(1);
-  grBDNPJ->SetLineColor(kViolet+2);
+  grBDNPJ->SetLineColor(kViolet+6);
 
-  TH2F* hempty2 = new TH2F("hempty2",";p_{T} (GeV/c);R_{AA}(B) / R_{AA}(D)",10,0,102,10,0,3.5);
+  TH2F* hempty2 = new TH2F("hempty2",";p_{T} (GeV/c);R_{AA}(B) / R_{AA}(D)",10,1,200,10,0,3.5);
   sethempty(hempty2);
 
   hempty2->Draw();
@@ -257,7 +256,10 @@ void fitBoverD(TString output)
   grBDNPJ->Draw("5same");
   hBoverDh->Draw("same");
   hBoverDl->Draw("same");
-  TLegend* legBoverD = new TLegend(0.50,0.70,0.94,0.88);
+  TLine* ltem = new TLine(100,0,100,2);
+  ltem->SetLineColor(kBlack);
+  ltem->Draw();
+  TLegend* legBoverD = new TLegend(0.60,0.70,0.99,0.88);
   setleg(legBoverD,0.045);
   legBoverD->AddEntry(grBD13,"0.2~2(3)","f");
   legBoverD->AddEntry(grBDDa,"B^{+} / D^{0}","f");
@@ -274,10 +276,14 @@ void fitBoverD(TString output)
   hBoverDl->Write();
   hBoverDhDa->Write();
   hBoverDlDa->Write();
+  hBoverDhNPJ->Write();
+  hBoverDlNPJ->Write();
   outputfile->Close();
 
   TCanvas* cFit = new TCanvas("cFit","",600,600);
-  hempty->Draw();
+  TH2F* hempty3 = new TH2F("hempty3",";p_{T} (GeV/c);R_{AA}",10,1,100,10,0,1.3);
+  sethempty(hempty3);
+  hempty3->Draw();
   grBRAA->Draw("2same");
   grNPJRAA->Draw("2same");
   grDRAA->Draw("pesame");
@@ -285,8 +291,11 @@ void fitBoverD(TString output)
   legD->Draw();
   drawCMS("PbPb");
   cFit->SaveAs("plots/cBoverD_Fit.pdf");
+
   TCanvas* cResult = new TCanvas("cResult","",600,600);
-  hempty2->Draw();
+  TH2F* hempty4 = new TH2F("hempty4",";p_{T} (GeV/c);R_{AA}(B) / R_{AA}(D)",10,0,102,10,0,3.5);
+  sethempty(hempty4);
+  hempty4->Draw();
   grBD13->Draw("5same");
   grBDDa->Draw("5same");
   grBDNPJ->Draw("5same");
