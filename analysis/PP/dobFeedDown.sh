@@ -24,13 +24,13 @@ if [ $DO_PROJECT -eq 1 ]; then
     SAMPLES=("${COL}MC" "${COL}MBMC" "${COL}" "${COL}MB")
     for i in ${SAMPLES[@]}
     do
-        root -l -b -q "project${i}.C+("\"$i\"","$CENTMIN$","$CENTMAX")"
+        root -l -b -q "project${i}.C+("\"$i\"")"
     done
     cd ..
 fi
 
 if [ $DO_FIT -eq 1 ]; then
-    root -l -b -q "bFeedDownFraction.C+("\"$COL\"","$CENTMIN","$CENTMAX")"
+    root -l -b -q "bFeedDownFraction.C+("\"$COL\"")"
     root -l -b -q "rebin.C+("\"$COL\"")"
     mv rootfiles/bFeedDownResult_temp.root rootfiles/bFeedDownResult.root
 fi
