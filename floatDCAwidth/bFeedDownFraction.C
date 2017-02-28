@@ -123,6 +123,7 @@ void bFeedDownFraction(TString col, Float_t centmin=0, Float_t centmax=100)
       
       for(int k=0;k<nwidth;k++)
         {
+          Float_t width = widthstart + k*widthstep;
 
           TH3D* hDataFile = (TH3D*)f->Get(Form("hData_%d",k));
           TH3D* hSidebandFile = (TH3D*)f->Get(Form("hSideband_%d",k));
@@ -537,7 +538,7 @@ void bFeedDownFraction(TString col, Float_t centmin=0, Float_t centmax=100)
           
           c6->SaveAs(Form("plots/%s_%.0f_%.0f_fit_%d.pdf",tcoly.Data(),ptLow,ptHigh,k));
           
-          apromptFractionError[i-1][k] = sqrt(pow(promptFractionErrorDataSmear[i-1],2)+pow(promptFractionErrorMCSmear[i-1],2));
+          apromptFractionError[i-1][k] = sqrt(pow(apromptFractionErrorDataSmear[i-1][k],2)+pow(apromptFractionErrorMCSmear[i-1][k],2));
 
           delete hD0DcaMCPSignal;
           delete hD0DcaMCNPSignal;
@@ -571,33 +572,47 @@ void bFeedDownFraction(TString col, Float_t centmin=0, Float_t centmax=100)
         }
       TH1D* hChi2ndf = new TH1D("hChi2ndf",";#alpha;#chi^{2} / ndf",nwidth,widthstart,widthstart+nwidth*widthstep);
       hChi2ndf->SetLineColor(kBlack);
-      int imax = 0;
-      float xmax = aChi2ndf[i-1][0];
+      int imin = 0;
+      float xmin = aChi2ndf[i-1][0];
       for(int k=0;k<nwidth;k++)
         {
+          Float_t width = widthstart + k*widthstep;
           c12->cd(k+1);
           ahD0DcaDataOverFit[k]->Draw("e");
           TF1* fLine1 = new TF1("fLine1", "1", 0,1);
+          fLine1->SetLineColor(kBlue);
           fLine1->Draw("same");
           ahD0DcaDataOverFit[k]->Draw("esame");
+          TLatex* texalpha = new TLatex(0.18,0.82,Form("Fill %.2f DCA",1-width));
+          settex(texalpha,0.06);
+          texalpha->Draw();
+          if(k==1) texPtTitle->Draw();
+          if(k==2 && isPbPb) texCent->Draw();
+
           hChi2ndf->SetBinContent(k+1,aChi2ndf[i-1][k]);
-          if(aChi2ndf[i-1][k]>xmax)
+          if(aChi2ndf[i-1][k]<xmin)
             {
-              imax = k;
-              xmax = aChi2ndf[i-1][k];
+              imin = k;
+              xmin = aChi2ndf[i-1][k];
             }
         }
       c12->cd(nwidth+1);
       hChi2ndf->Draw();
+      c12->cd(imin+1);
+      TF1* fLine2 = new TF1("fLine2", "1", 0,1);
+      fLine2->SetLineColor(kRed);
+      fLine2->Draw("same");
+      ahD0DcaDataOverFit[imin]->Draw("esame");
+      
       c12->SaveAs(Form("plotsChi2/%s_%.0f_%.0f_Chi2.pdf",tcoly.Data(),ptLow,ptHigh));
 
-      promptFraction[i-1] = apromptFraction[i-1][imax];
-      promptFractionError[i-1] = apromptFractionError[i-1][imax];
-      promptFractionErrorMCSmear[i-1] = apromptFractionErrorMCSmear[i-1][imax];
-      promptFractionErrorDataSmear[i-1] = apromptFractionErrorDataSmear[i-1][imax];
-      promptFractionErrorDataOnly[i-1] = apromptFractionErrorDataOnly[i-1][imax];
-      totalYield[i-1] = atotalYield[i-1][imax];
-      totalYieldError[i-1] = atotalYieldError[i-1][imax];
+      promptFraction[i-1] = apromptFraction[i-1][imin];
+      promptFractionError[i-1] = apromptFractionError[i-1][imin];
+      promptFractionErrorMCSmear[i-1] = apromptFractionErrorMCSmear[i-1][imin];
+      promptFractionErrorDataSmear[i-1] = apromptFractionErrorDataSmear[i-1][imin];
+      promptFractionErrorDataOnly[i-1] = apromptFractionErrorDataOnly[i-1][imin];
+      totalYield[i-1] = atotalYield[i-1][imin];
+      totalYieldError[i-1] = atotalYieldError[i-1][imin];
 
     }
 
