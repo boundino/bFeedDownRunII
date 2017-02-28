@@ -3,6 +3,7 @@ using namespace std;
 
 void finalPlots(TString coly, TString outputFraction, Float_t centmin=0, Float_t centmax=100)
 {
+
   gStyle->SetOptTitle(0);
   gStyle->SetOptStat(0);
   gStyle->SetEndErrorSize(0);
@@ -19,6 +20,7 @@ void finalPlots(TString coly, TString outputFraction, Float_t centmin=0, Float_t
   TFile* inputFONLL = new TFile(Form("%s_%s.root",outputFraction.Data(),tcoly.Data()));
   TString tcolyDCA = isPbPb?Form("%scent%.0f%.0f",coly.Data(),centmin,centmax):Form("%s",coly.Data());
   TFile* inputDCA = new TFile(Form("../analysis/%s/rootfiles/bFeedDownResult.root",tcolyDCA.Data()));
+  TFile* inputDCAfloat = new TFile(Form("../floatDCAwidth/%s/rootfiles/bFeedDownResult.root",tcolyDCA.Data()));
 
   TGraphErrors* grFractionDCA = (TGraphErrors*)inputDCA->Get("grPromptFraction2");
   grFractionDCA->SetName("grFractionDCA");
@@ -27,6 +29,14 @@ void finalPlots(TString coly, TString outputFraction, Float_t centmin=0, Float_t
   grFractionDCA->SetMarkerStyle(20);
   grFractionDCA->SetLineColor(kBlack);
   grFractionDCA->SetMarkerColor(kBlack);
+
+  TGraphErrors* grFractionDCAfloat = (TGraphErrors*)inputDCAfloat->Get("grPromptFraction2");
+  grFractionDCAfloat->SetName("grFractionDCAfloat");
+  grFractionDCAfloat->SetLineWidth(1.);
+  grFractionDCAfloat->SetMarkerSize(0.8);
+  grFractionDCAfloat->SetMarkerStyle(20);
+  grFractionDCAfloat->SetLineColor(kGreen+3);
+  grFractionDCAfloat->SetMarkerColor(kGreen+3);
 
   TGraphAsymmErrors* grFraction = (TGraphAsymmErrors*)inputFONLL->Get("grPromptFraction");
   grFraction->SetLineWidth(1.);
@@ -41,11 +51,19 @@ void finalPlots(TString coly, TString outputFraction, Float_t centmin=0, Float_t
   TGraphAsymmErrors* grFraction3NPJ = (TGraphAsymmErrors*)inputFONLL->Get("grPromptFraction3NPJ");
 
   TGraphAsymmErrors* grFractionRatio = (TGraphAsymmErrors*)inputFONLL->Get("grPromptFraction");
+  grFractionRatio->SetName("grFractionRatio");
   grFractionRatio->SetLineWidth(1.);
   grFractionRatio->SetMarkerSize(0.8);
   grFractionRatio->SetMarkerStyle(20);
-  grFractionRatio->SetLineColor(kRed);
-  grFractionRatio->SetMarkerColor(kRed);
+  grFractionRatio->SetLineColor(kBlack);
+  grFractionRatio->SetMarkerColor(kBlack);
+  TGraphAsymmErrors* grFractionRatiofloat = (TGraphAsymmErrors*)inputFONLL->Get("grPromptFraction");
+  grFractionRatiofloat->SetName("grFractionRatiofloat");
+  grFractionRatiofloat->SetLineWidth(1.);
+  grFractionRatiofloat->SetMarkerSize(0.8);
+  grFractionRatiofloat->SetMarkerStyle(20);
+  grFractionRatiofloat->SetLineColor(kGreen+3);
+  grFractionRatiofloat->SetMarkerColor(kGreen+3);
   TGraphAsymmErrors* grFractionRatio3 = (TGraphAsymmErrors*)inputFONLL->Get("grPromptFraction3");
   TGraphAsymmErrors* grFractionRatio3Da = (TGraphAsymmErrors*)inputFONLL->Get("grPromptFraction3Da");
   TGraphAsymmErrors* grFractionRatio3NPJ = (TGraphAsymmErrors*)inputFONLL->Get("grPromptFraction3NPJ");
@@ -62,9 +80,11 @@ void finalPlots(TString coly, TString outputFraction, Float_t centmin=0, Float_t
 
   for(int i=0;i<grFraction->GetN();i++)
     {
-      Double_t pt,fracDCA;
+      Double_t pt,fracDCA,fracDCAfloat;
       grFractionDCA->GetPoint(i,pt,fracDCA);
       grFractionDCA->SetPointError(i,0,grFractionDCA->GetErrorY(i));
+      grFractionDCAfloat->GetPoint(i,pt,fracDCAfloat);
+      grFractionDCAfloat->SetPointError(i,0,grFractionDCAfloat->GetErrorY(i));
 
       Double_t frac,frac3;
       grFraction->GetPoint(i,pt,frac);
@@ -90,6 +110,10 @@ void finalPlots(TString coly, TString outputFraction, Float_t centmin=0, Float_t
       grFractionRatio->SetPoint(i,pt,fracDCA/frac);
       grFractionRatio->SetPointEYlow(i,0);
       grFractionRatio->SetPointEYhigh(i,0);
+
+      grFractionRatiofloat->SetPoint(i,pt,fracDCAfloat/frac);
+      grFractionRatiofloat->SetPointEYlow(i,0);
+      grFractionRatiofloat->SetPointEYhigh(i,0);
 
       Double_t fracDa,frac3Da;
       grFractionDa->GetPoint(i,pt,fracDa);
@@ -232,6 +256,7 @@ void finalPlots(TString coly, TString outputFraction, Float_t centmin=0, Float_t
   if(isPbPb) grFraction3Da->Draw("same2");
   if(isPbPb) grFraction3NPJ->Draw("same5");
   grFractionDCA->Draw("samepe");
+  grFractionDCAfloat->Draw("samepe");
   TLatex* texCms = new TLatex(0.12,0.93, "#scale[1.25]{CMS} Preliminary");
   texCms->SetNDC();
   texCms->SetTextAlign(12);
@@ -248,16 +273,18 @@ void finalPlots(TString coly, TString outputFraction, Float_t centmin=0, Float_t
   TLegend* leg;
   if(!isPbPb)
     {
-      leg = new TLegend(0.30,0.21,0.90,0.33);
+      leg = new TLegend(0.30,0.15,0.90,0.33);
       setleg(leg);
       leg->AddEntry(grFractionDCA,"Fit DCA","pl");
-      leg->AddEntry(grFraction,"FONLL + MC eff","pl");
+      leg->AddEntry(grFractionDCAfloat,"Fit DCA (float DCA width)","pl");
+      leg->AddEntry(grFraction,"FONLL + MC eff","pl");          
     }
   else
     {
-      leg = new TLegend(0.24,0.09,0.75,0.33);
+      leg = new TLegend(0.24,0.03,0.75,0.33);
       setleg(leg);
       leg->AddEntry(grFractionDCA,"Fit DCA","pl");
+      leg->AddEntry(grFractionDCAfloat,"Fit DCA (float DCA width)","pl");
       leg->AddEntry(grFraction3Da,"FONLL (B R_{AA} / D R_{AA} from data)","f");
       leg->AddEntry(grFraction3,"FONLL (B R_{AA} / D R_{AA} varies 0.2~2(3))","f");
       leg->AddEntry(grFraction3NPJ,"FONLL (J/#psi R_{AA} / D R_{AA} from data)","f");
@@ -279,7 +306,11 @@ void finalPlots(TString coly, TString outputFraction, Float_t centmin=0, Float_t
   pad2->cd();
   hempty2->Draw();
   if(isPbPb) grFractionRatio3->Draw("same2");
-  else grFractionRatio->Draw("samepe");
+  else 
+    {
+      grFractionRatio->Draw("samepe");
+      grFractionRatiofloat->Draw("samepe");
+    }
   if(isPbPb) grFractionRatio3Da->Draw("same2");
   if(isPbPb) grFractionRatio3NPJ->Draw("same5");
   TLine* l = new TLine(1,1,200,1);
@@ -289,8 +320,7 @@ void finalPlots(TString coly, TString outputFraction, Float_t centmin=0, Float_t
   l->Draw();
   c2->cd();
 
-  c2->SaveAs(Form("plots/cfpromptComparison_%s.pdf",tcoly.Data()));
-  c2->SaveAs(Form("plots/cfpromptComparison_%s.png",tcoly.Data()));
+  c2->SaveAs(Form("plots/cfpromptComparisonVsfloat_%s.pdf",tcoly.Data()));
 
   if(isPbPb)
     {
@@ -309,6 +339,7 @@ void finalPlots(TString coly, TString outputFraction, Float_t centmin=0, Float_t
       if(isPbPb) grFraction3Da->Draw("same2");
       if(isPbPb) grFraction3NPJ->Draw("same5");
       grFractionDCA->Draw("samepe");
+      grFractionDCAfloat->Draw("samepe");
       texCms->Draw();
       texCol->Draw();
       leg->Draw();
@@ -346,29 +377,7 @@ void finalPlots(TString coly, TString outputFraction, Float_t centmin=0, Float_t
       l->Draw();
       c3->cd();      
       
-      c3->SaveAs(Form("plots/cfpromptComparisonFull_%s.pdf",tcoly.Data()));
-      c3->SaveAs(Form("plots/cfpromptComparisonFull_%s.png",tcoly.Data()));
+      c3->SaveAs(Form("plots/cfpromptComparisonFullVsfloat_%s.pdf",tcoly.Data()));
       
     }
 }
-
-int main(int argc, char* argv[])
-{
-  if(argc==5)
-    {
-      finalPlots(argv[1],argv[2],atof(argv[3]),atof(argv[4]));
-      return 0;
-    }
-  else if(argc==3)
-    {
-      finalPlots(argv[1],argv[2]);
-      return 0;
-    }
-  else
-    {
-      cout<<"  Error: Arguments number is invalid."<<endl;
-      return 1;
-    }
-
-}
-
