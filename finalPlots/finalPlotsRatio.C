@@ -108,6 +108,13 @@ void finalPlotsRatio(Float_t centmin=0, Float_t centmax=100)
       grFractionRatioDerivationfloat->SetPointError(i,grFractionRatioDerivationfloat->GetErrorX(i),100*efracDCARatio/fracDCARatio);
     }
 
+  TBox* tbox = new TBox(1.,-10,200,10);
+  tbox->SetFillStyle(1001);
+  tbox->SetFillColor(18);
+  TBox* tbox2 = new TBox(1.,-5,200,5);
+  tbox2->SetFillStyle(1001);
+  tbox2->SetFillColor(17);
+
   TH2F* hempty = new TH2F("hempty","",20,1.,200.,10.,0.,1.5);
   hempty->GetXaxis()->SetTitle("D^{0} p_{T} (GeV/c)");
   hempty->GetYaxis()->SetTitle("Prompt fraction Ratio (PbPb / PP)");
@@ -124,7 +131,7 @@ void finalPlotsRatio(Float_t centmin=0, Float_t centmax=100)
   hempty->GetXaxis()->SetLabelSize(0.04);
   hempty->GetYaxis()->SetLabelSize(0.04);
 
-  TH2F* hempty2 = new TH2F("hempty2","",20,1.,200.,5.,-50,50);
+  TH2F* hempty2 = new TH2F("hempty2","",20,1.,200.,5.,-30,30);
   hempty2->GetXaxis()->SetTitle("D^{0} p_{T} (GeV/c)");
   hempty2->GetYaxis()->SetTitle("Derivation (%)");
   hempty2->GetXaxis()->SetNdivisions(515);
@@ -186,6 +193,9 @@ void finalPlotsRatio(Float_t centmin=0, Float_t centmax=100)
   pad2->Draw();
   pad2->cd();
   hempty2->Draw();
+  tbox->Draw();
+  tbox2->Draw();
+  hempty2->Draw("same");
   TLine* l = new TLine(1,0,200,0);
   l->SetLineStyle(2);
   l->SetLineColor(kBlack);
