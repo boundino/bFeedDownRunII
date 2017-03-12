@@ -32,6 +32,8 @@ void bFeedDownFraction(TString col, Float_t centmin=0, Float_t centmax=100)
   c15->Divide(3,5);
   TCanvas* c12 = new TCanvas("c12","",810,800);
   c12->Divide(3,4);
+  TCanvas* c2fit = new TCanvas("c2fit","",400,600);
+  c2fit->Divide(1,2);
 
   TFile* f = new TFile(Form("rootfiles/bFeedDown%s.hist.root",col.Data()));
   TFile* fMB = new TFile(Form("rootfiles/bFeedDown%sMB.hist.root",col.Data()));
@@ -421,6 +423,18 @@ void bFeedDownFraction(TString col, Float_t centmin=0, Float_t centmax=100)
           leg4->AddEntry(fNP,"Non-Prompt D^{0}","f");
           leg4->Draw("same");
           
+          c2fit->cd(1);
+          gPad->SetLogy();
+          hD0DcaData->Draw();
+          hD0DcaData->GetFunction("fMix")->Draw("flsame");
+          fNP->Draw("same");
+          hD0DcaData->Draw("same");
+          texCms->Draw();
+          texCol->Draw();
+          texPtY->Draw();
+          texRatio->Draw();          
+          leg4->Draw("same");
+
           c6->cd(4);
           fitMass(hMData, hMMCSignal, hMMCSwapped);
           
@@ -499,6 +513,12 @@ void bFeedDownFraction(TString col, Float_t centmin=0, Float_t centmax=100)
           TF1* fLine1 = new TF1("fLine1", "1", 0,1);
           fLine1->Draw("same");
           ahD0DcaDataOverFit[k]->Draw("esame");
+
+          c2fit->cd(2);
+          ahD0DcaDataOverFit[k]->Draw("e");
+          fLine1->Draw("same");
+          ahD0DcaDataOverFit[k]->Draw("esame");
+          c2fit->SaveAs(Form("plots/%s_%.0f_%.0f_fitc2_%d.pdf",tcoly.Data(),ptLow,ptHigh,k));
           
           cout<<"    Smearing Data DCA distributions ..."<<endl;
           c6->cd(6);
