@@ -84,7 +84,7 @@ source dobFeedDownFONLL.sh [c] 1 1 1
 <ol>
 <li> <code>finalPlots.C</code> </li>
 </ol>
-<p> It prerequires the results from <code>analysis/</code>, <code>floatDCAwidth/ and <code>pfFONLL/</code>. </p>
+<p> It prerequires the results from <code>analysis/</code>, <code>floatDCAwidth/</code> and <code>pfFONLL/</code>. </p>
 <h3> How to run it </h3>
 <ul>
 <li> Run all three collision systems <br />
