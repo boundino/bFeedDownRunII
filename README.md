@@ -27,6 +27,31 @@ source dobFeedDown.sh 1 1
 </li>
 </ul>
 
+<h2> floatDCAwidth/ </h2>
+<h3> Introduction </h3>
+<p> floatDCAwidth/ extract prompt fractions with variation of widths of MC DCA templates (for estimation of systematic uncertainty). For each collision system, there are two steps: </p>
+<ol>
+<li> <code>floatDCAwidth/*/savehist/project*.C</code>: Project and save histograms </li>
+<li> <code>floatDCAwidth/bFeedDownFraction.C</code>: Fit DCA distributions </li>
+</ol>
+<h3> How to run </h3>
+<ul>
+<li> Run all three collision systems (PP,PbPbcent0100,PbPbcent010) <br />
+<pre>
+cd floatDCAwidth/ 
+source doall.sh 1 1
+</pre>
+<p> where the arguments decide whether to run each step. </p>
+</li>
+<li> Run one collision system (e.g. PP) <br />
+<pre>
+cd floatDCAwidth/PP/
+source dobFeedDown.sh 1 1
+</pre>
+<p> where the arguments decide whether to run each step. </p> 
+</li>
+</ul>
+
 <h2> pfFONLL/ </h2>
 <h3> Introduction </h3>
 <p> pfFONLL/ calculates and plots prompt fractions by FONLL. There are three steps: </p>
@@ -59,7 +84,7 @@ source dobFeedDownFONLL.sh [c] 1 1 1
 <ol>
 <li> <code>finalPlots.C</code> </li>
 </ol>
-<p> It prerequires the results from <code>analysis/</code> and <code>pfFONLL/</code>. </p>
+<p> It prerequires the results from <code>analysis/</code>, <code>floatDCAwidth/ and <code>pfFONLL/</code>. </p>
 <h3> How to run it </h3>
 <ul>
 <li> Run all three collision systems <br />
