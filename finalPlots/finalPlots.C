@@ -94,8 +94,8 @@ void finalPlots(TString coly, TString outputFraction, Float_t centmin=0, Float_t
       grFraction3->SetPoint(i,pt,fcenter);
       grFraction3->SetPointEYlow(i,ferror);
       grFraction3->SetPointEYhigh(i,ferror);
-      Double_t rh = frac3-fracDCA;
-      Double_t rl = frac-fracDCA;
+      Double_t rh = (frac3-fracDCA)/fracDCA;
+      Double_t rl = (frac-fracDCA)/fracDCA;
       Double_t rcenter = (rh+rl)/2.;
       Double_t rerror = (rh-rl)/2.;
       grFractionDerivation3->SetPoint(i,pt,rcenter);
@@ -107,13 +107,13 @@ void finalPlots(TString coly, TString outputFraction, Float_t centmin=0, Float_t
       grBoverD3->SetPointEYlow(i,BoverDerror);
       grBoverD3->SetPointEYhigh(i,BoverDerror);
 
-      grFractionDerivation->SetPoint(i,pt,frac-fracDCA);
+      grFractionDerivation->SetPoint(i,pt,(frac-fracDCA)/fracDCA);
       grFractionDerivation->SetPointEYlow(i,0);
       grFractionDerivation->SetPointEYhigh(i,0);
 
-      grFractionDerivationfloat->SetPoint(i,pt,fracDCAfloat-fracDCA);
-      grFractionDerivationfloat->SetPointEYlow(i,grFractionDCA->GetErrorY(i));
-      grFractionDerivationfloat->SetPointEYhigh(i,grFractionDCA->GetErrorY(i));
+      grFractionDerivationfloat->SetPoint(i,pt,(fracDCAfloat-fracDCA)/fracDCA);
+      grFractionDerivationfloat->SetPointEYlow(i,grFractionDCA->GetErrorY(i)/fracDCA);
+      grFractionDerivationfloat->SetPointEYhigh(i,grFractionDCA->GetErrorY(i)/fracDCA);
 
       Double_t fracDa,frac3Da;
       grFractionDa->GetPoint(i,pt,fracDa);
@@ -123,8 +123,8 @@ void finalPlots(TString coly, TString outputFraction, Float_t centmin=0, Float_t
       grFraction3Da->SetPoint(i,pt,fcenterDa);
       grFraction3Da->SetPointEYlow(i,ferrorDa);
       grFraction3Da->SetPointEYhigh(i,ferrorDa);
-      Double_t rhDa = frac3Da-fracDCA;
-      Double_t rlDa = fracDa-fracDCA;
+      Double_t rhDa = (frac3Da-fracDCA)/fracDCA;
+      Double_t rlDa = (fracDa-fracDCA)/fracDCA;
       Double_t rcenterDa = (rhDa+rlDa)/2.;
       Double_t rerrorDa = (rhDa-rlDa)/2.;
       grFractionDerivation3Da->SetPoint(i,pt,rcenterDa);
@@ -144,8 +144,8 @@ void finalPlots(TString coly, TString outputFraction, Float_t centmin=0, Float_t
       grFraction3NPJ->SetPoint(i,pt,fcenterNPJ);
       grFraction3NPJ->SetPointEYlow(i,ferrorNPJ);
       grFraction3NPJ->SetPointEYhigh(i,ferrorNPJ);
-      Double_t rhNPJ = frac3NPJ-fracDCA;
-      Double_t rlNPJ = fracNPJ-fracDCA;
+      Double_t rhNPJ = (frac3NPJ-fracDCA)/fracDCA;
+      Double_t rlNPJ = (fracNPJ-fracDCA)/fracDCA;
       Double_t rcenterNPJ = (rhNPJ+rlNPJ)/2.;
       Double_t rerrorNPJ = (rhNPJ-rlNPJ)/2.;
       grFractionDerivation3NPJ->SetPoint(i,pt,rcenterNPJ);
@@ -189,6 +189,13 @@ void finalPlots(TString coly, TString outputFraction, Float_t centmin=0, Float_t
   grBoverD3NPJ->SetLineColor(kViolet+6);
   grBoverD3NPJ->SetFillColorAlpha(kViolet+6,0.4);
 
+  TBox* tbox = new TBox(1.,-0.1,200,0.1);
+  tbox->SetFillStyle(1001);
+  tbox->SetFillColor(18);
+  TBox* tbox2 = new TBox(1.,-0.05,200,0.05);
+  tbox2->SetFillStyle(1001);
+  tbox2->SetFillColor(17);
+
   TH2F* hempty = new TH2F("hempty","",20,1.,200.,10.,0.,1.1);
   hempty->GetXaxis()->SetTitle("D^{0} p_{T} (GeV/c)");
   hempty->GetYaxis()->SetTitle("Prompt fraction");
@@ -207,7 +214,7 @@ void finalPlots(TString coly, TString outputFraction, Float_t centmin=0, Float_t
 
   TH2F* hempty2 = new TH2F("hempty2","",20,1.,200.,5.,-0.5,0.5);
   hempty2->GetXaxis()->SetTitle("D^{0} p_{T} (GeV/c)");
-  hempty2->GetYaxis()->SetTitle("X - Fit");
+  hempty2->GetYaxis()->SetTitle("(X - Fit) / Fit");
   hempty2->GetXaxis()->SetNdivisions(515);
   hempty2->GetYaxis()->SetNdivisions(505);
   hempty2->GetXaxis()->CenterTitle();
@@ -305,6 +312,11 @@ void finalPlots(TString coly, TString outputFraction, Float_t centmin=0, Float_t
   pad2->Draw();
   pad2->cd();
   hempty2->Draw();
+  if(!isPbPb)
+    {
+      tbox->Draw();
+      tbox2->Draw();
+    }
   if(isPbPb) grFractionDerivation3->Draw("same2");
   else 
     {

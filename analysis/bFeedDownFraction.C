@@ -28,6 +28,7 @@ void bFeedDownFraction(TString col, Float_t centmin=0, Float_t centmax=100)
   TCanvas* c2 = new TCanvas("c2","",400,600);
   c2->Divide(1,2);
   TCanvas* c1 = new TCanvas("c1","",500,400);
+  TCanvas* cFit = new TCanvas("cFit","",400,300);
   TCanvas* c15 = new TCanvas("c15","",810,1000);
   c15->Divide(3,5);
 
@@ -395,6 +396,19 @@ void bFeedDownFraction(TString col, Float_t centmin=0, Float_t centmax=100)
       leg4->AddEntry(fNP,"Non-Prompt D^{0}","f");
       leg4->Draw("same");
       
+      cFit->cd();
+      gPad->SetLogy();
+      hD0DcaData->Draw();
+      hD0DcaData->GetFunction("fMix")->Draw("flsame");
+      fNP->Draw("same");
+      hD0DcaData->Draw("same");
+      texCms->Draw();
+      texCol->Draw();
+      texPtY->Draw();
+      texRatio->Draw();
+      leg4->Draw("same");
+      cFit->SaveAs(Form("plots/%s_%.0f_%.0f_onlyFit.pdf",tcoly.Data(),ptLow,ptHigh));
+
       c6->cd(4);
       fitMass(hMData, hMMCSignal, hMMCSwapped);
 
