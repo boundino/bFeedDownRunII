@@ -28,9 +28,9 @@ void bFeedDownFraction(TString col, Float_t centmin=0, Float_t centmax=100)
   TCanvas* c2 = new TCanvas("c2","",400,600);
   c2->Divide(1,2);
   TCanvas* c1 = new TCanvas("c1","",500,400);
-  TCanvas* cFit = new TCanvas("cFit","",400,300);
   TCanvas* c15 = new TCanvas("c15","",810,1000);
   c15->Divide(3,5);
+  TCanvas* cFit = new TCanvas("cFit","",600,600);
 
   TFile* f = new TFile(Form("rootfiles/bFeedDown%s.hist.root",col.Data()));
   TFile* fMB = new TFile(Form("rootfiles/bFeedDown%sMB.hist.root",col.Data()));
@@ -396,17 +396,88 @@ void bFeedDownFraction(TString col, Float_t centmin=0, Float_t centmax=100)
       leg4->AddEntry(fNP,"Non-Prompt D^{0}","f");
       leg4->Draw("same");
       
+      TH1D* hDataPlot = new TH1D("hDataPlot", ";D^{0} DCA (cm);dN / d(D^{0} DCA) (cm^{-1})", nBinY-1, binsY);
+      TH1D* hMixPlot = new TH1D("hMixPlot", ";D^{0} DCA (cm);dN / d(D^{0} DCA) (cm^{-1})", nBinY-1, binsY);
+      TH1D* hNPPlot = new TH1D("hNPPlot", ";D^{0} DCA (cm);dN / d(D^{0} DCA) (cm^{-1})", nBinY-1, binsY);
+      hDataPlot->SetMarkerStyle(20);
+      hDataPlot->SetMarkerSize(1.1);
+      hDataPlot->SetMarkerColor(kBlack);
+      hMixPlot->SetFillStyle(1001);
+      hMixPlot->SetFillColor(kRed-9);
+      hMixPlot->SetLineColor(kRed+1);
+      hMixPlot->SetLineWidth(3);
+      hNPPlot->SetFillStyle(1001);
+      hNPPlot->SetFillColor(kAzure-4);
+      hNPPlot->SetLineColor(kAzure+2);
+      hNPPlot->SetLineWidth(3);
+      for(int k=0;k<nBinY-1;k++)
+        {
+          Float_t A = totalYield[i-1];
+          Float_t R = promptFraction[i-1];
+          Float_t promptYield = hD0DcaMCPSignal->GetBinContent(k+1);
+          Float_t nonPromptYield = hD0DcaMCNPSignal->GetBinContent(k+1);
+          hDataPlot->SetBinContent(k+1, hD0DcaData->GetBinContent(k+1));
+          hDataPlot->SetBinError(k+1, hD0DcaData->GetBinError(k+1));
+          hMixPlot->SetBinContent(k+1, A*(R*promptYield+(1-R)*nonPromptYield));
+          hNPPlot->SetBinContent(k+1, A*(1-R)*nonPromptYield);
+        }
+      hDataPlot->GetXaxis()->CenterTitle();
+      hDataPlot->GetYaxis()->CenterTitle();
+      hDataPlot->GetXaxis()->SetTitleOffset(1.15);//0.9
+      hDataPlot->GetYaxis()->SetTitleOffset(1.15);//1.
+      hDataPlot->GetXaxis()->SetTitleSize(0.060);//0.045
+      hDataPlot->GetYaxis()->SetTitleSize(0.060);//0.045
+      hDataPlot->GetXaxis()->SetTitleFont(42);
+      hDataPlot->GetYaxis()->SetTitleFont(42);
+      hDataPlot->GetXaxis()->SetLabelFont(42);
+      hDataPlot->GetYaxis()->SetLabelFont(42);
+      hDataPlot->GetXaxis()->SetLabelSize(0.050);//0.035
+      hDataPlot->GetYaxis()->SetLabelSize(0.050);//0.035
+      hDataPlot->GetXaxis()->SetLabelOffset(0.01);
+      hDataPlot->SetMaximum(hDataPlot->GetMaximum()*5);
+
       cFit->cd();
       gPad->SetLogy();
-      hD0DcaData->Draw();
-      hD0DcaData->GetFunction("fMix")->Draw("flsame");
-      fNP->Draw("same");
-      hD0DcaData->Draw("same");
-      texCms->Draw();
-      texCol->Draw();
-      texPtY->Draw();
-      texRatio->Draw();
-      leg4->Draw("same");
+      cFit->SetFillColor(0);
+      cFit->SetBorderMode(0);
+      cFit->SetBorderSize(2);
+      cFit->SetLeftMargin(0.16);
+      cFit->SetRightMargin(0.05);
+      cFit->SetTopMargin(0.080);
+      cFit->SetBottomMargin(0.150);
+      cFit->SetFrameBorderMode(0);
+      hDataPlot->Draw();
+      hMixPlot->Draw("same");
+      hNPPlot->Draw("same");
+      hDataPlot->Draw("same");
+      TString coly = col=="PbPb"?"PbPb":"pp";
+      TLatex* texCmsFit = new TLatex(0.21,0.89, "CMS");
+      settex(texCmsFit,0.07,13);
+      texCmsFit->SetTextFont(62);
+      TString tlumi = col=="PbPb"?"530 #mub^{-1} (5.02 TeV PbPb)":"27.4 pb^{-1} (5.02 TeV pp)";
+      TLatex* texColFit = new TLatex(0.94,0.95, Form("%s",tlumi.Data()));
+      settex(texColFit,0.038,32);
+      TLatex* texPtFit = new TLatex(0.91,0.865,Form("%.1f < p_{T} < %.1f GeV/c",ptLow,ptHigh));
+      settex(texPtFit,0.045,32);
+      TLatex* texYFit = new TLatex(0.91,0.81,"|y| < 1.0");
+      settex(texYFit,0.045,32);
+      TLatex* texCentFit = new TLatex(0.91,0.755, Form("Cent. %.0f-%.0f%s",centmin,centmax,"%"));
+      settex(texCentFit,0.045,32);
+      TLegend* legFit = new TLegend(0.53, 0.54, 0.97, 0.72);
+      legFit->SetBorderSize(0);
+      legFit->SetTextSize(0.045);
+      legFit->SetTextFont(42);
+      legFit->SetFillStyle(0);
+      legFit->AddEntry(hDataPlot, "Data", "pl");
+      legFit->AddEntry(hMixPlot, "Prompt D^{0}", "f");
+      legFit->AddEntry(hNPPlot, "Non-Prompt D^{0}", "f");
+      texCmsFit->Draw();
+      texColFit->Draw();
+      texPtFit->Draw();
+      texYFit->Draw();
+      if(col=="PbPb") texCentFit->Draw();
+      legFit->Draw("same");      
+      cFit->RedrawAxis();
       cFit->SaveAs(Form("plots/%s_%.0f_%.0f_onlyFit.pdf",tcoly.Data(),ptLow,ptHigh));
 
       c6->cd(4);
