@@ -451,19 +451,18 @@ void bFeedDownFraction(TString col, Float_t centmin=0, Float_t centmax=100)
       hNPPlot->Draw("same");
       hDataPlot->Draw("same");
       TString coly = col=="PbPb"?"PbPb":"pp";
-      TLatex* texCmsFit = new TLatex(0.21,0.89, "CMS");
+      TLatex* texCmsFit = new TLatex(0.21,0.89, "#bf{CMS} #scale[0.6]{#it{Supplementary}}");
       settex(texCmsFit,0.07,13);
-      texCmsFit->SetTextFont(62);
       TString tlumi = col=="PbPb"?"530 #mub^{-1} (5.02 TeV PbPb)":"27.4 pb^{-1} (5.02 TeV pp)";
       TLatex* texColFit = new TLatex(0.94,0.95, Form("%s",tlumi.Data()));
       settex(texColFit,0.038,32);
-      TLatex* texPtFit = new TLatex(0.91,0.865,Form("%.1f < p_{T} < %.1f GeV/c",ptLow,ptHigh));
-      settex(texPtFit,0.045,32);
-      TLatex* texYFit = new TLatex(0.91,0.81,"|y| < 1.0");
+      TLatex* texYFit = new TLatex(0.91,0.865,"|y| < 1.0");
       settex(texYFit,0.045,32);
-      TLatex* texCentFit = new TLatex(0.91,0.755, Form("Cent. %.0f-%.0f%s",centmin,centmax,"%"));
+      TLatex* texPtFit = new TLatex(0.91,0.79,Form("%.1f < p_{T} < %.1f GeV/c",ptLow,ptHigh));
+      settex(texPtFit,0.045,32);
+      TLatex* texCentFit = new TLatex(0.91,0.738, Form("Cent. %.0f-%.0f%s",centmin,centmax,"%"));
       settex(texCentFit,0.045,32);
-      TLegend* legFit = new TLegend(0.53, 0.54, 0.97, 0.72);
+      TLegend* legFit = new TLegend(0.53, 0.53, 0.97, 0.70);
       legFit->SetBorderSize(0);
       legFit->SetTextSize(0.045);
       legFit->SetTextFont(42);
@@ -478,7 +477,8 @@ void bFeedDownFraction(TString col, Float_t centmin=0, Float_t centmax=100)
       if(col=="PbPb") texCentFit->Draw();
       legFit->Draw("same");      
       cFit->RedrawAxis();
-      cFit->SaveAs(Form("plots/%s_%.0f_%.0f_onlyFit.pdf",tcoly.Data(),ptLow,ptHigh));
+      cFit->SaveAs(Form("plotsPaper/%s_%.0f_%.0f_onlyFit.pdf",tcoly.Data(),ptLow,ptHigh));
+      cFit->SaveAs(Form("plotsPaper/%s_%.0f_%.0f_onlyFit.png",tcoly.Data(),ptLow,ptHigh));
 
       c6->cd(4);
       fitMass(hMData, hMMCSignal, hMMCSwapped);

@@ -89,9 +89,8 @@ void fpromptPlots(TString coly, Int_t pcolor, Int_t bcolor, Int_t pstyle, Float_
   leg->Draw();
   //TLatex* texCmsc1 = new TLatex(0.14,0.94, "#scale[1.25]{CMS} Preliminary");
   //settex(texCmsc1,0.05,12);
-  TLatex* texCmsc1 = new TLatex(0.21,0.89, "CMS");
+  TLatex* texCmsc1 = new TLatex(0.21,0.89, "#bf{CMS} #scale[0.6]{#it{Supplementary}}");
   settex(texCmsc1,0.07,13);
-  texCmsc1->SetTextFont(62);
   TLatex* texDzeroc1 = new TLatex(0.91,0.913, "D#scale[0.6]{#lower[-0.7]{0}} + #bar{D}#scale[0.6]{#lower[-0.7]{0}}");
   settex(texDzeroc1,0.07,33);
   texDzeroc1->SetTextFont(62);
@@ -103,5 +102,6 @@ void fpromptPlots(TString coly, Int_t pcolor, Int_t bcolor, Int_t pstyle, Float_
   texColc1->Draw();
 
   cfprompt->SaveAs(Form("plots/cfprompt_%s.pdf",tcoly.Data()));
+  cfprompt->SaveAs(Form("plots/cfprompt_%s.png",tcoly.Data()));
 
 }

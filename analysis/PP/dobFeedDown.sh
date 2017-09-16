@@ -6,7 +6,7 @@ COL="PP"
 
 ##
 
-FOLDERS=("plots" "plotsResult" "rootfiles")
+FOLDERS=("plots" "plotsResult" "rootfiles" "plotsPaper")
 for i in ${FOLDERS[@]}
 do
     if [ ! -d $i ]; then
