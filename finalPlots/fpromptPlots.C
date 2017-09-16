@@ -23,10 +23,10 @@ void fpromptPlots(TString coly, Int_t pcolor, Int_t bcolor, Int_t pstyle, Float_
   TGraphErrors* grFractionDCA = (TGraphErrors*)inputDCA->Get("grPromptFraction2");
   grFractionDCA->SetName("grFractionDCA");
   grFractionDCA->SetLineWidth(1.);
-  grFractionDCA->SetMarkerSize(0.9);
   grFractionDCA->SetMarkerStyle(pstyle);
   grFractionDCA->SetLineColor(pcolor);
   grFractionDCA->SetMarkerColor(pcolor);
+  grFractionDCA->SetMarkerSize(pstyle==33?1.3:0.9);
 
   TGraphErrors* grFractionSyst = (TGraphErrors*)grFractionDCA->Clone("grFractionSyst");
   grFractionSyst->SetLineWidth(0);
